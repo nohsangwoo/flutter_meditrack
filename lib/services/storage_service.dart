@@ -26,6 +26,12 @@ class StorageService {
     return decodedData.map((item) => Medication.fromJson(item)).toList();
   }
 
+  // delete all medications
+  Future<void> deleteAllMedications() async {
+    if (_prefs == null) await initialize();
+    await _prefs!.clear();
+  }
+
   // check all medications
   Future<List<Medication>> checkAllMedications() async {
     if (_prefs == null) await initialize();

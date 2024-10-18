@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:meditrack/models/medication.dart';
+import 'package:meditrack/screens/detail_alarm_screen.dart';
 import 'package:provider/provider.dart';
 import 'screens/home_screen.dart';
 import 'services/notification_service.dart';
@@ -29,13 +30,19 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: const HomeScreen(),
+        // home: const HomeScreen(),
+        routes: {
+          '/': (context) => const HomeScreen(),
+          '/detail_alarm': (context) => const DetailAlarmScreen(),
+        },
       ),
     );
   }
 }
 
 class MedicationProvider extends ChangeNotifier {
+  // provider와 영구 저장을 위한 shared_preferences를 연동하기 위한 내용들
+
   List<Medication> _medications = [];
 
   List<Medication> get medications => _medications;
@@ -58,6 +65,12 @@ class MedicationProvider extends ChangeNotifier {
     _medications.remove(medication);
     await StorageService().saveMedications(_medications);
     await NotificationService().cancelNotification(medication.hashCode);
+    notifyListeners();
+  }
+
+  void deleteAllMedications() async {
+    _medications = [];
+    await StorageService().deleteAllMedications();
     notifyListeners();
   }
 }
