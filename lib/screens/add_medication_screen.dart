@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:meditrack/main.dart';
 import 'package:provider/provider.dart';
@@ -15,6 +16,33 @@ class AddMedicationScreenState extends State<AddMedicationScreen> {
   final _formKey = GlobalKey<FormState>();
   String _name = '';
   TimeOfDay _time = TimeOfDay.now();
+
+  void _showIOSTimePicker() {
+    showCupertinoModalPopup<void>(
+      context: context,
+      builder: (BuildContext context) => Container(
+        height: 216,
+        padding: const EdgeInsets.only(top: 6.0),
+        margin: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        color: CupertinoColors.systemBackground.resolveFrom(context),
+        child: SafeArea(
+          top: false,
+          child: CupertinoDatePicker(
+            initialDateTime: DateTime(2023, 1, 1, _time.hour, _time.minute),
+            mode: CupertinoDatePickerMode.time,
+            use24hFormat: true,
+            onDateTimeChanged: (DateTime newTime) {
+              setState(() {
+                _time = TimeOfDay(hour: newTime.hour, minute: newTime.minute);
+              });
+            },
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,17 +69,7 @@ class AddMedicationScreenState extends State<AddMedicationScreen> {
             ),
             const SizedBox(height: 16.0),
             ElevatedButton(
-              onPressed: () async {
-                final TimeOfDay? picked = await showTimePicker(
-                  context: context,
-                  initialTime: _time,
-                );
-                if (picked != null && picked != _time) {
-                  setState(() {
-                    _time = picked;
-                  });
-                }
-              },
+              onPressed: _showIOSTimePicker,
               child: Text('복용 시간 선택: ${_time.format(context)}'),
             ),
             const SizedBox(height: 16.0),
