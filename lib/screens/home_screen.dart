@@ -26,6 +26,9 @@ class HomeScreen extends StatelessWidget {
                     itemBuilder: (context, index) {
                       return MedicationListItem(
                         medication: medicationProvider.medications[index],
+                        onDelete: (medication) {
+                          medicationProvider.deleteMedication(medication);
+                        },
                       );
                     },
                   ),

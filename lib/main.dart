@@ -53,4 +53,11 @@ class MedicationProvider extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+  void deleteMedication(Medication medication) async {
+    _medications.remove(medication);
+    await StorageService().saveMedications(_medications);
+    await NotificationService().cancelNotification(medication.hashCode);
+    notifyListeners();
+  }
 }
