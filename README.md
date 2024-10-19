@@ -74,3 +74,7 @@ timezone이 일반적으로 UTC로 설정되어 있어서 한국 시간대로 �
 - ref: https://pub.dev/packages/workmanager
 
 hasTakenMedicationToday을 누른 날짜를 같이 기록한다.(day만 기록)
+
+# workmanager의경우 android에서만 적용됨 ios에서는 적용안됨
+
+- 대안: FCM으로 기능 통일하기.
