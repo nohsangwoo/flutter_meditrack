@@ -70,3 +70,5 @@ timezone이 일반적으로 UTC로 설정되어 있어서 한국 시간대로 �
   (변수이름은 hasTakenMedicationToday)
 - 만약 오늘 복용체크가 완료됐다면 알람을 재설정하고 완료되지 않았다면 알람을 그대로 둔다
   재설정하는 알람은 반복되는 알람인 \_scheduleFollowUpNotifications 메서드를 조건에따라 재설정한다.
+
+- ref: https://pub.dev/packages/workmanager

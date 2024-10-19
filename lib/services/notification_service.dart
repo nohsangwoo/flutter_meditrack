@@ -1,6 +1,5 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:rxdart/subjects.dart';
-import 'package:uuid/uuid.dart';
 import '../models/medication.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz;
@@ -25,11 +24,14 @@ class NotificationService {
         final int baseScheduleId = decodedPayload['baseScheduleId'];
         final String medicationName = decodedPayload['medicationName'];
         final String scheduleTime = decodedPayload['scheduleTime'];
+        final bool hasTakenMedicationToday =
+            decodedPayload['hasTakenMedicationToday'];
         // final String dosage = decodedPayload['dosage'];
         print('알림 ID: $id');
         print('약 이름: $medicationName');
         print('예약 시간: $scheduleTime');
         print('baseScheduleId: $baseScheduleId');
+        print('hasTakenMedicationToday: $hasTakenMedicationToday');
         // print('복용량: $dosage');
 
         // 여기서 필요한 추가 처리를 수행할 수 있습니다.
@@ -137,6 +139,7 @@ class NotificationService {
       'scheduleTime': '${medication.time.hour}:${medication.time.minute}',
       'scheduledDate': scheduledDate.toIso8601String(),
       'baseScheduleId': medication.baseScheduleId,
+      'hasTakenMedicationToday': medication.hasTakenMedicationToday,
     });
 
     // 매일 반복되는 알람 설정
@@ -255,25 +258,17 @@ class NotificationService {
   Future<void> checkActiveNotifications() async {
     final List<PendingNotificationRequest> pendingNotifications =
         await _flutterLocalNotificationsPlugin.pendingNotificationRequests();
-
+    debugPrint(
+        'checkActiveNotifications in notification service---------------');
     debugPrint('활성화된 알람 수: ${pendingNotifications.length}');
     for (var notification in pendingNotifications) {
-      final List<String> payloadParts = notification.payload?.split('|') ?? [];
-      final String notificationType =
-          payloadParts.isNotEmpty ? payloadParts[0] : '알 수 없음';
-      final String scheduleInfo =
-          payloadParts.length > 1 ? payloadParts[1] : '알 수 없음';
-      String scheduledTime =
-          payloadParts.length > 2 ? payloadParts[2] : '알 수 없음';
-
       debugPrint('알람 ID: ${notification.id}');
       debugPrint('알람 제목: ${notification.title}');
       debugPrint('알람 본문: ${notification.body}');
-      debugPrint('알림 유형: $notificationType');
-      debugPrint('스케줄 정보: $scheduleInfo');
-      debugPrint('예정된 시간: $scheduledTime');
-      debugPrint('---');
+      debugPrint('payload: ${notification.payload}');
     }
+    debugPrint(
+        'end of checkActiveNotifications in notification service---------------');
   }
 
   // 새로운 메서드 추가

@@ -10,8 +10,23 @@ import 'package:workmanager/workmanager.dart';
 // 백그라운드 작업을 위한 콜백 함수
 @pragma('vm:entry-point')
 void callbackDispatcher() {
-  Workmanager().executeTask((task, inputData) {
-    print("백그라운드 작업 실행: ${DateTime.now()}");
+  Workmanager().executeTask((task, inputData) async {
+    debugPrint("백그라운드 작업 실행: ${DateTime.now()}");
+
+    // StorageService 초기화
+    await StorageService().initialize();
+
+    // 약물 정보 불러오기
+    List<Medication> medications = await StorageService().loadMedications();
+
+    // 약물 정보 사용 예시
+    for (var medication in medications) {
+      debugPrint(
+          "약물 이름: ${medication.name}, 복용 시간: ${medication.time}, hasTakenMedicationToday: ${medication.hasTakenMedicationToday}");
+      // 여기에서 필요한 작업을 수행합니다.
+      // 예: 알림 확인, 복용 여부 업데이트 등
+    }
+
     return Future.value(true);
   });
 }
@@ -71,10 +86,10 @@ class MedicationProvider extends ChangeNotifier {
 
   List<Medication> get medications => _medications;
 
-  void addMedication(Medication medication) {
-    debugPrint("for add Medication agres in main.dart: $medication");
+  Future<void> addMedication(Medication medication) async {
     _medications.add(medication);
     StorageService().saveMedications(_medications);
+    await NotificationService().scheduleMedicationNotification(medication);
     notifyListeners();
   }
 
@@ -109,6 +124,11 @@ class MedicationProvider extends ChangeNotifier {
         .updateMedication(nextMedication, originMedicationBaseScheduleId);
     _medications = await StorageService().loadMedications();
     notifyListeners();
+  }
+
+  void checkAllMedications() async {
+    await StorageService().checkAllMedications();
+    await NotificationService().checkActiveNotifications();
   }
 
   // void update

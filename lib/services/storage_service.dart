@@ -10,15 +10,14 @@ class StorageService {
   }
 
   Future<void> saveMedications(List<Medication> medications) async {
-    print("------------------------");
-    print("saveMedications in storage service");
+    print("saveMedications in storage service------------------------");
     print("medications: $medications");
-    print("------------------------");
     if (_prefs == null) await initialize();
     final String encodedData = json.encode(
       medications.map((medication) => medication.toJson()).toList(),
     );
     await _prefs!.setString('medications', encodedData);
+    print("end of saveMedications in storage service------------------------");
   }
 
   Future<List<Medication>> loadMedications() async {
@@ -45,10 +44,10 @@ class StorageService {
     final List<dynamic> decodedData = json.decode(encodedData);
     final List<Medication> medications =
         decodedData.map((item) => Medication.fromJson(item)).toList();
-    print("------------------------");
-    print("checkAllMedications in storage service");
+    print("checkAllMedications in storage service------------------------");
     print(medications);
-    print("------------------------");
+    print(
+        "end of checkAllMedications in storage service------------------------");
     return medications;
   }
 

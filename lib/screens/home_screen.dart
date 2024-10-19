@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:meditrack/main.dart';
 import 'package:meditrack/services/notification_service.dart';
-import 'package:meditrack/services/storage_service.dart';
 import 'package:provider/provider.dart';
 import '../widgets/medication_list_item.dart';
 import 'add_medication_screen.dart';
@@ -61,13 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: ElevatedButton.icon(
               icon: const Icon(Icons.stop_circle_outlined),
               onPressed: () async {
-                final medications =
-                    await StorageService().checkAllMedications();
-
-                print(medications);
-                print("check all medications buttons in home screen");
-
-                await NotificationService().checkActiveNotifications();
+                medicationProvider.checkAllMedications();
               },
               label: const Text("check all Notifications"),
             ),

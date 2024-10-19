@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:meditrack/main.dart';
 import 'package:provider/provider.dart';
 import '../models/medication.dart';
-import '../services/notification_service.dart';
 import 'dart:math';
 import 'package:uuid/uuid.dart';
 
@@ -83,24 +82,17 @@ class AddMedicationScreenState extends State<AddMedicationScreen> {
                   _formKey.currentState!.save();
                   final baseScheduleId = uuid.v4().hashCode & 0x7FFFFFFF;
 
-                  debugPrint("check time format: $_time");
-
                   final medication = Medication(
                     name: _name,
                     time: _time,
                     baseScheduleId: baseScheduleId,
                   );
 
-                  debugPrint(
-                      "for add Medication agres in add_medication_screen: $medication");
-                  debugPrint(
-                      "for add Medication baseScheduleId agres in add_medication_screen: ${medication.baseScheduleId}");
                   final navigator = Navigator.of(context);
                   final medicationProvider =
                       Provider.of<MedicationProvider>(context, listen: false);
-                  medicationProvider.addMedication(medication);
-                  await NotificationService()
-                      .scheduleMedicationNotification(medication);
+                  await medicationProvider.addMedication(medication);
+
                   if (mounted) {
                     navigator.pop();
                   }
