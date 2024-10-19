@@ -172,9 +172,9 @@ class NotificationService {
       scheduledDate = scheduledDate.add(const Duration(days: 1));
     }
 
-    for (int i = 1; i <= 3; i++) {
+    for (int i = 1; i <= 10; i++) {
       final tz.TZDateTime followUpTime =
-          scheduledDate.add(Duration(minutes: i));
+          scheduledDate.add(const Duration(minutes: 30));
       await _flutterLocalNotificationsPlugin.zonedSchedule(
         medication.baseScheduleId + i,
         '약 복용 알림',
@@ -246,7 +246,7 @@ class NotificationService {
   }
 
   Future<void> cancelNotification(int baseScheduleId) async {
-    for (int i = 0; i <= 3; i++) {
+    for (int i = 0; i <= 10; i++) {
       await _flutterLocalNotificationsPlugin.cancel(baseScheduleId + i);
     }
   }
