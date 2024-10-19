@@ -26,6 +26,8 @@ class _HomeScreenState extends State<HomeScreen> {
       print("inside listen in home.dart");
       print(event);
 
+      // 알람 탭에서 선택시 알람상세페이지로 이동하는 경우
+      // 리스트목록에서 클릭시 알람상세페이지로 이동하는 경우는  medication_list_item.dart에서 처리
       Navigator.pushNamed(context, '/detail_alarm', arguments: event);
     });
   }

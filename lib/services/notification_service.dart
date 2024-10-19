@@ -20,18 +20,14 @@ class NotificationService {
         final decodedPayload = jsonDecode(notificationResponse.payload!);
         debugPrint("decodedPayload: $decodedPayload");
 
-        final int id = decodedPayload['id'];
         final int baseScheduleId = decodedPayload['baseScheduleId'];
         final String medicationName = decodedPayload['medicationName'];
-        final String scheduleTime = decodedPayload['scheduleTime'];
-        final bool hasTakenMedicationToday =
-            decodedPayload['hasTakenMedicationToday'];
+        final String scheduledDate = decodedPayload['scheduledDate'];
+
         // final String dosage = decodedPayload['dosage'];
-        print('알림 ID: $id');
         print('약 이름: $medicationName');
-        print('예약 시간: $scheduleTime');
+        print('예약 시간: $scheduledDate');
         print('baseScheduleId: $baseScheduleId');
-        print('hasTakenMedicationToday: $hasTakenMedicationToday');
         // print('복용량: $dosage');
 
         // 여기서 필요한 추가 처리를 수행할 수 있습니다.
@@ -119,7 +115,8 @@ class NotificationService {
     final tz.TZDateTime scheduledDate =
         _nextInstanceOfTime(medication.time, isNextDay: isNextDay);
 
-    debugPrint('-----------------------------------');
+    debugPrint(
+        'scheduleMedicationNotification-----------------------------------');
     debugPrint('scheduledDate: $scheduledDate');
 
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
@@ -134,12 +131,9 @@ class NotificationService {
         NotificationDetails(android: androidPlatformChannelSpecifics);
 
     final payload = jsonEncode({
-      'id': medication.baseScheduleId,
-      'medicationName': medication.name,
-      'scheduleTime': '${medication.time.hour}:${medication.time.minute}',
-      'scheduledDate': scheduledDate.toIso8601String(),
       'baseScheduleId': medication.baseScheduleId,
-      'hasTakenMedicationToday': medication.hasTakenMedicationToday,
+      'medicationName': medication.name,
+      'scheduledDate': scheduledDate.toIso8601String(),
     });
 
     // 매일 반복되는 알람 설정
@@ -159,6 +153,9 @@ class NotificationService {
     // 1분 간격 알림을 설정하는 새로운 메서드 호출
     await _scheduleFollowUpNotifications(
         medication, scheduledDate, platformChannelSpecifics, payload);
+
+    debugPrint(
+        'end of scheduleMedicationNotification-----------------------------------');
   }
 
   // 새로운 메서드: 1분 간격 알림 설정
