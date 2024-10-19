@@ -4,6 +4,7 @@ import '../models/medication.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:flutter/material.dart';
+import 'dart:convert';
 
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
@@ -13,9 +14,28 @@ class NotificationService {
 
   // on tap on any notification
   static void onNotificationTap(NotificationResponse notificationResponse) {
-    // push같은 기능임.
-    print("notification tapped");
-    onClickNotification.add(notificationResponse.payload!);
+    print("알림이 탭되었습니다");
+    if (notificationResponse.payload != null) {
+      try {
+        final decodedPayload = jsonDecode(notificationResponse.payload!);
+        debugPrint("decodedPayload: $decodedPayload");
+
+        final int id = decodedPayload['id'];
+        final String medicationName = decodedPayload['medicationName'];
+        // final String dosage = decodedPayload['dosage'];
+        final String scheduleTime = decodedPayload['scheduleTime'];
+
+        print('알림 ID: $id');
+        print('약 이름: $medicationName');
+        // print('복용량: $dosage');
+        print('예약 시간: $scheduleTime');
+
+        // 여기서 필요한 추가 처리를 수행할 수 있습니다.
+        onClickNotification.add(notificationResponse.payload!);
+      } catch (e) {
+        print('페이로드 디코딩 오류: $e');
+      }
+    }
   }
 
   static final FlutterLocalNotificationsPlugin
@@ -106,10 +126,6 @@ class NotificationService {
       medication.time.minute,
     );
 
-    if (scheduledDate.isBefore(now)) {
-      scheduledDate = scheduledDate.add(const Duration(days: 1));
-    }
-
     print("예약된 알림 시간: $scheduledDate");
 
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
@@ -123,6 +139,17 @@ class NotificationService {
     const NotificationDetails platformChannelSpecifics =
         NotificationDetails(android: androidPlatformChannelSpecifics);
 
+    // 페이로드 생성
+    final payload = jsonEncode({
+      'id': medication.hashCode,
+      'medicationName': medication.name,
+      // 'dosage': medication.dosage,
+      'scheduleTime': '${medication.time.hour}:${medication.time.minute}',
+      'scheduledDate': scheduledDate.toIso8601String(),
+    });
+
+    debugPrint("payload: $payload");
+
     await _flutterLocalNotificationsPlugin.zonedSchedule(
       medication.hashCode,
       '약 복용 시간',
@@ -133,13 +160,13 @@ class NotificationService {
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
       matchDateTimeComponents: DateTimeComponents.time,
-      payload: scheduledDate.toIso8601String(),
+      payload: payload,
     );
   }
 
   Future<void> hardcodingScheduleMedicationNotificationForTest() async {
     // set yy mm dd and time for pm 10:00
-    tz.TZDateTime settingTime = tz.TZDateTime(tz.local, 2024, 10, 18, 23, 23);
+    tz.TZDateTime settingTime = tz.TZDateTime(tz.local, 2024, 10, 18, 11, 2);
 // 2024-01-22 00:00:00.000Z
 
     debugPrint("settingTime: $settingTime");
@@ -173,7 +200,7 @@ class NotificationService {
     await _flutterLocalNotificationsPlugin.cancel(id);
   }
 
-  // 새로운 메서드 추가
+  // 새��운 메서드 추가
   Future<void> checkActiveNotifications() async {
     final List<PendingNotificationRequest> pendingNotifications =
         await _flutterLocalNotificationsPlugin.pendingNotificationRequests();

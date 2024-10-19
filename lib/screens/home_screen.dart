@@ -99,7 +99,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: ElevatedButton.icon(
               icon: const Icon(Icons.add_alert),
               onPressed: () async {
-                await NotificationService().scheduleAllDayNotifications(21);
+                await NotificationService().scheduleAllDayNotifications(2);
               },
               label: const Text("Schedule all day Notifications"),
             ),
