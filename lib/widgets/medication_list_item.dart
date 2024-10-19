@@ -28,6 +28,7 @@ class MedicationListItem extends StatelessWidget {
           'baseScheduleId': medication.baseScheduleId,
           'medicationName': medication.name,
           'scheduleTime': medication.time.format(context),
+          'hasTakenMedicationToday': medication.hasTakenMedicationToday,
         });
         Navigator.pushNamed(context, '/detail_alarm', arguments: payload);
       },

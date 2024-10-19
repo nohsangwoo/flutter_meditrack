@@ -53,6 +53,9 @@ class DetailAlarmScreen extends StatelessWidget {
                 style: Theme.of(context).textTheme.bodyMedium),
             Text('baseScheduleId: ${payload['baseScheduleId']}',
                 style: Theme.of(context).textTheme.bodyMedium),
+            Text(
+                'hasTakenMedicationToday: ${payload['hasTakenMedicationToday']}',
+                style: Theme.of(context).textTheme.bodyMedium),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: ElevatedButton.icon(
@@ -86,9 +89,6 @@ class DetailAlarmScreen extends StatelessWidget {
                   );
                   medicationProvider.updateMedication(
                       nextMedication, originMedicationBaseScheduleId);
-                  await NotificationService().scheduleMedicationNotification(
-                      nextMedication,
-                      isNextDay: true);
                   Navigator.of(context).pop();
                 },
                 label: const Text("약 복용 확인"),

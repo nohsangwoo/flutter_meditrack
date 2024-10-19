@@ -117,13 +117,19 @@ class MedicationProvider extends ChangeNotifier {
 
   void updateMedication(
       Medication nextMedication, int originMedicationBaseScheduleId) async {
+    debugPrint(
+        "updateMedication in main.dart-----------------------------------");
     debugPrint("nextMedication in main.dart: $nextMedication");
     debugPrint(
         "originMedicationBaseScheduleId in main.dart: $originMedicationBaseScheduleId");
     await StorageService()
         .updateMedication(nextMedication, originMedicationBaseScheduleId);
     _medications = await StorageService().loadMedications();
+    await NotificationService()
+        .scheduleMedicationNotification(nextMedication, isNextDay: true);
     notifyListeners();
+    debugPrint(
+        "end of updateMedication in main.dart-----------------------------------");
   }
 
   void checkAllMedications() async {
