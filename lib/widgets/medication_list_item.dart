@@ -25,6 +25,7 @@ class MedicationListItem extends StatelessWidget {
         debugPrint("specific medication in medication_list_item: $medication");
         final payload = jsonEncode({
           'id': medication.baseScheduleId,
+          'baseScheduleId': medication.baseScheduleId,
           'medicationName': medication.name,
           'scheduleTime': medication.time.format(context),
         });

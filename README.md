@@ -60,5 +60,6 @@ timezone이 일반적으로 UTC로 설정되어 있어서 한국 시간대로 �
 - 아이콘 추가 ✅
 - app 배포 준비
 
-
-379289951~379289950
+- 지우는 기능 먼저 구현
+- 그다음 알람 재설정 기능 구현(지우고 다시 재설정 하는 형식이라 지우는 기능 먼저 구현해야함)
+  (target: cancelAndRescheduleMedicationNotifications in notification_service.dart)

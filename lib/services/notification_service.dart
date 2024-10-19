@@ -1,5 +1,6 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:rxdart/subjects.dart';
+import 'package:uuid/uuid.dart';
 import '../models/medication.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz;
@@ -21,15 +22,15 @@ class NotificationService {
         debugPrint("decodedPayload: $decodedPayload");
 
         final int id = decodedPayload['id'];
-        final String medicationName = decodedPayload['medicationName'];
-        // final String dosage = decodedPayload['dosage'];
-        final String scheduleTime = decodedPayload['scheduleTime'];
         final int baseScheduleId = decodedPayload['baseScheduleId'];
+        final String medicationName = decodedPayload['medicationName'];
+        final String scheduleTime = decodedPayload['scheduleTime'];
+        // final String dosage = decodedPayload['dosage'];
         print('알림 ID: $id');
         print('약 이름: $medicationName');
-        // print('복용량: $dosage');
         print('예약 시간: $scheduleTime');
         print('baseScheduleId: $baseScheduleId');
+        // print('복용량: $dosage');
 
         // 여기서 필요한 추가 처리를 수행할 수 있습니다.
         onClickNotification.add(notificationResponse.payload!);
@@ -111,8 +112,12 @@ class NotificationService {
     debugPrint('iOS 알림 권한 요청 결과: $result');
   }
 
-  Future<void> scheduleMedicationNotification(Medication medication) async {
-    final tz.TZDateTime scheduledDate = _nextInstanceOfTime(medication.time);
+  Future<void> scheduleMedicationNotification(Medication medication,
+      {bool isNextDay = false}) async {
+    final tz.TZDateTime scheduledDate =
+        _nextInstanceOfTime(medication.time, isNextDay: isNextDay);
+
+    debugPrint('scheduledDate: $scheduledDate');
 
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails(
@@ -168,7 +173,7 @@ class NotificationService {
     }
   }
 
-  tz.TZDateTime _nextInstanceOfTime(TimeOfDay time) {
+  tz.TZDateTime _nextInstanceOfTime(TimeOfDay time, {bool isNextDay = false}) {
     final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
     tz.TZDateTime scheduledDate = tz.TZDateTime(
       tz.local,
@@ -178,9 +183,17 @@ class NotificationService {
       time.hour,
       time.minute,
     );
+
+    if (isNextDay) {
+      scheduledDate = scheduledDate.add(const Duration(days: 1));
+    }
+
     if (scheduledDate.isBefore(now)) {
       scheduledDate = scheduledDate.add(const Duration(days: 1));
     }
+
+    debugPrint('scheduledDate in nextInstanceOfTime: $scheduledDate');
+
     return scheduledDate;
   }
 
@@ -216,8 +229,10 @@ class NotificationService {
     );
   }
 
-  Future<void> cancelNotification(int id) async {
-    await _flutterLocalNotificationsPlugin.cancel(id);
+  Future<void> cancelNotification(int baseScheduleId) async {
+    for (int i = 0; i <= 3; i++) {
+      await _flutterLocalNotificationsPlugin.cancel(baseScheduleId + i);
+    }
   }
 
   // 새 메서드 추가
@@ -340,20 +355,32 @@ class NotificationService {
   }
 
   Future<void> cancelAndRescheduleMedicationNotifications(
-      Medication medication) async {
+      Medication medication, Medication nextMedication) async {
     // 현재 알림 취소
-    for (int i = 0; i <= 3; i++) {
-      await _flutterLocalNotificationsPlugin
-          .cancel(medication.baseScheduleId + i);
-    }
+    await cancelNotification(medication.baseScheduleId);
 
+    debugPrint("current medication: $medication");
+    // const uuid = Uuid();
+
+    // final nextBaseScheduleId = uuid.v4().hashCode & 0x7FFFFFFF;
+
+    // final nextMedication = Medication(
+    //   name: medication.name,
+    //   time: medication.time,
+    //   baseScheduleId: nextBaseScheduleId,
+    // );
+
+    debugPrint("nextMedication: $nextMedication");
     // 다음 날 같은 시간으로 새로운 알림 예약
-    final tz.TZDateTime nextDay =
-        _nextInstanceOfTime(medication.time).add(const Duration(days: 1));
-    await scheduleMedicationNotification(Medication(
-      name: medication.name,
-      time: TimeOfDay.fromDateTime(nextDay),
-      baseScheduleId: medication.baseScheduleId,
-    ));
+    // final tz.TZDateTime nextDay =
+    //     _nextInstanceOfTime(medication.time).add(const Duration(days: 1));
+
+    // debugPrint('nextDay: $nextDay');
+    // final nextMedication = Medication(
+    //     name: medication.name,
+    //     time: medication.time,
+    //     baseScheduleId: medication.baseScheduleId);
+
+    // await scheduleMedicationNotification(nextMedication, isNextDay: true);
   }
 }

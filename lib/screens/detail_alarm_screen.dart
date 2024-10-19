@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 
 import 'package:meditrack/main.dart';
+import 'package:meditrack/models/medication.dart';
 import 'package:meditrack/services/notification_service.dart';
 import 'package:provider/provider.dart';
+import 'package:uuid/uuid.dart';
 
 class DetailAlarmScreen extends StatelessWidget {
   const DetailAlarmScreen({super.key});
@@ -25,8 +27,8 @@ class DetailAlarmScreen extends StatelessWidget {
     // final medicationScheduleId
 
     final medication = medicationProvider.medications.firstWhere(
-      (element) => element.baseScheduleId == payload['id'],
-      orElse: () => throw Exception('Medication not found'),
+      (element) => element.baseScheduleId == payload['baseScheduleId'],
+      orElse: () => Medication.empty(),
     );
     debugPrint("specific medication in detail_alarm_screen: $medication");
 
@@ -56,13 +58,34 @@ class DetailAlarmScreen extends StatelessWidget {
               child: ElevatedButton.icon(
                 icon: const Icon(Icons.check),
                 onPressed: () async {
+                  const uuid = Uuid();
+
+                  final originMedicationBaseScheduleId =
+                      payload['baseScheduleId'];
+                  final nextBaseScheduleId = uuid.v4().hashCode & 0x7FFFFFFF;
+
+                  final nextMedication = Medication(
+                    name: medication.name,
+                    time: medication.time,
+                    baseScheduleId: nextBaseScheduleId,
+                  );
+
+                  print(
+                      "originMedicationBaseScheduleId in detail_alarm_screen: $originMedicationBaseScheduleId");
+                  print(
+                      "nextMedication in detail_alarm_screen: $nextMedication");
+
                   await NotificationService()
-                      .cancelAndRescheduleMedicationNotifications(medication);
+                      .cancelAndRescheduleMedicationNotifications(
+                          medication, nextMedication);
+
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                         content: Text(
                             '${medication.name} 복용 확인됨. 다음 날 알림이 재설정되었습니다.')),
                   );
+                  medicationProvider.updateMedication(
+                      nextMedication, originMedicationBaseScheduleId);
                   Navigator.of(context).pop();
                 },
                 label: const Text("약 복용 확인"),

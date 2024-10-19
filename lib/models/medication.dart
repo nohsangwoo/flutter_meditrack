@@ -4,11 +4,21 @@ class Medication {
   final String name;
   final TimeOfDay time;
   final int baseScheduleId;
+
   Medication({
     required this.name,
     required this.time,
     required this.baseScheduleId,
   });
+
+  // 빈 Medication 객체를 위한 팩토리 생성자 추가
+  factory Medication.empty() {
+    return Medication(
+      name: '',
+      time: const TimeOfDay(hour: 0, minute: 0),
+      baseScheduleId: -1,
+    );
+  }
 
   Map<String, dynamic> toJson() {
     return {

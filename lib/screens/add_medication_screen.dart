@@ -83,6 +83,8 @@ class AddMedicationScreenState extends State<AddMedicationScreen> {
                   _formKey.currentState!.save();
                   final baseScheduleId = uuid.v4().hashCode & 0x7FFFFFFF;
 
+                  debugPrint("check time format: $_time");
+
                   final medication = Medication(
                     name: _name,
                     time: _time,

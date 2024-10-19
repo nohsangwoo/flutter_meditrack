@@ -65,7 +65,7 @@ class MedicationProvider extends ChangeNotifier {
   void deleteMedication(Medication medication) async {
     _medications.remove(medication);
     await StorageService().saveMedications(_medications);
-    await NotificationService().cancelNotification(medication.hashCode);
+    await NotificationService().cancelNotification(medication.baseScheduleId);
     notifyListeners();
   }
 
@@ -75,4 +75,17 @@ class MedicationProvider extends ChangeNotifier {
     await NotificationService().cancelAllNotifications();
     notifyListeners();
   }
+
+  void updateMedication(
+      Medication nextMedication, int originMedicationBaseScheduleId) async {
+    debugPrint("nextMedication in main.dart: $nextMedication");
+    debugPrint(
+        "originMedicationBaseScheduleId in main.dart: $originMedicationBaseScheduleId");
+    await StorageService()
+        .updateMedication(nextMedication, originMedicationBaseScheduleId);
+    _medications = await StorageService().loadMedications();
+    notifyListeners();
+  }
+
+  // void update
 }
