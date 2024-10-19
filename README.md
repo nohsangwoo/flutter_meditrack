@@ -78,3 +78,4 @@ hasTakenMedicationToday을 누른 날짜를 같이 기록한다.(day만 기록)
 # workmanager의경우 android에서만 적용됨 ios에서는 적용안됨
 
 - 대안: FCM으로 기능 통일하기.
+- usage는 background_service.dart에 남겨둠 시~발~
