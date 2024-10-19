@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:meditrack/models/medication.dart';
 import 'package:meditrack/screens/detail_alarm_screen.dart';
@@ -33,7 +35,7 @@ Future<void> _performPeriodicTask() async {
 }
 
 Future<void> _performMidnightTask() async {
-  // 여기에 자정 무렵에 수행할 작���을 구현합니다.
+  // 여기에 자정 무렵에 수행할 작을 구현합니다.
   print('자정 작업 수행 중: ${DateTime.now()}');
 
   // StorageService 초기화
@@ -70,6 +72,8 @@ Future<void> _performMidnightTask() async {
     // NotificationService를 사용하여 알림 업데이트
     await NotificationService()
         .cancelAndRescheduleMedicationNotifications(medication, nextMedication);
+
+    // 데이터 변경 알림
 
     debugPrint(
         "end of updateMedication in _performMidnightTask-----------------------------------");
@@ -111,7 +115,11 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (_) => MedicationProvider()..loadMedications(),
+          create: (_) {
+            final provider = MedicationProvider()..loadMedications();
+            provider.startPeriodicRefresh(); // 주기적 새로고침 시작
+            return provider;
+          },
         ),
       ],
       child: MaterialApp(
@@ -231,6 +239,13 @@ class MedicationProvider extends ChangeNotifier {
   Future<void> refreshMedications() async {
     _medications = await StorageService().loadMedications();
     notifyListeners();
+  }
+
+  // 주기적으로 데이터를 새로고침하는 메서드
+  void startPeriodicRefresh() {
+    Timer.periodic(const Duration(minutes: 15), (_) {
+      refreshMedications();
+    });
   }
 
   // void update
