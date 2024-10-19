@@ -19,7 +19,6 @@ class DetailAlarmScreen extends StatelessWidget {
     final medicationProvider = Provider.of<MedicationProvider>(context);
 
     print('payload: $payload');
-    // print('medicationProvider: ${medicationProvider.medications}');
 
     final medication = medicationProvider.medications.firstWhere(
       (element) => element.baseScheduleId == payload['baseScheduleId'],
@@ -62,6 +61,7 @@ class DetailAlarmScreen extends StatelessWidget {
                     name: medication.name,
                     time: medication.time,
                     baseScheduleId: nextBaseScheduleId,
+                    hasTakenMedicationToday: true,
                   );
                   print(
                       "originMedicationBaseScheduleId in detail_alarm_screen: $originMedicationBaseScheduleId");
