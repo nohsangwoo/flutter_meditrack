@@ -5,12 +5,36 @@ import 'package:provider/provider.dart';
 import 'screens/home_screen.dart';
 import 'services/notification_service.dart';
 import 'services/storage_service.dart';
+import 'package:workmanager/workmanager.dart';
+
+// 백그라운드 작업을 위한 콜백 함수
+@pragma('vm:entry-point')
+void callbackDispatcher() {
+  Workmanager().executeTask((task, inputData) {
+    print("백그라운드 작업 실행: ${DateTime.now()}");
+    return Future.value(true);
+  });
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await NotificationService().initialize();
-  await NotificationService().requestPermissions(); // 권한 요청 추가
+  await NotificationService().requestPermissions();
   await StorageService().initialize();
+
+  // Workmanager 초기화
+  await Workmanager().initialize(
+    callbackDispatcher,
+    isInDebugMode: true,
+  );
+
+  // 1분마다 실행되는 주기적 작업 등록
+  await Workmanager().registerPeriodicTask(
+    "15",
+    "simplePeriodicTask",
+    frequency: const Duration(minutes: 1),
+  );
+
   runApp(const MyApp());
 }
 

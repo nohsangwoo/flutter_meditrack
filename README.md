@@ -63,3 +63,10 @@ timezone이 일반적으로 UTC로 설정되어 있어서 한국 시간대로 �
 - 지우는 기능 먼저 구현
 - 그다음 알람 재설정 기능 구현(지우고 다시 재설정 하는 형식이라 지우는 기능 먼저 구현해야함)
   (target: cancelAndRescheduleMedicationNotifications in notification_service.dart)
+
+# workmanager를 이용하여 일정시간마다 체크해서 매일 알람을 재설정하는 기능 구현하기
+
+- provider로 등록된 모든 알람에서 오늘 복용체크가 완료됐는지 확인하는 변수를 확인한다.
+  (변수이름은 hasTakenMedicationToday)
+- 만약 오늘 복용체크가 완료됐다면 알람을 재설정하고 완료되지 않았다면 알람을 그대로 둔다
+  재설정하는 알람은 반복되는 알람인 \_scheduleFollowUpNotifications 메서드를 조건에따라 재설정한다.
