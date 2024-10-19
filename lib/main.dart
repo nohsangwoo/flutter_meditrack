@@ -25,12 +25,25 @@ void callbackDispatcher() {
           "약물 이름: ${medication.name}, 복용 시간: ${medication.time}, hasTakenMedicationToday: ${medication.hasTakenMedicationToday}, hasTakenMedicationTodayDate: ${medication.hasTakenMedicationTodayDate}");
       // 여기에서 필요한 작업을 수행합니다.
       // 예: 알림 확인, 복용 여부 업데이트 등
-      // #1. 체크된 약먹은 날이 오늘인 경우
-      if (medication.hasTakenMedicationTodayDate ==
-          Medication.dateOnly(DateTime.now())) {
+      // #1. 약 복용확인이 체크된 경우
+      if (medication.hasTakenMedicationToday == true) {
+        // Medication.dateOnly(DateTime.now())) {
         // medication.markAsTakenToday();
         // await StorageService().saveMedications(medications);
-        debugPrint("오늘 복용 확인된 약물 입니다.: $medication");
+        debugPrint("약 복용만 체크된 경우: $medication");
+        // #2. 체크된 약먹은 날이 오늘이거나 이전날인경우
+        if (medication.hasTakenMedicationTodayDate != null &&
+            medication.hasTakenMedicationTodayDate!.isBefore(
+                Medication.dateOnly(DateTime.now())
+                    .add(const Duration(days: 1)))) {
+          // 오늘 또는 이전에 약을 복용한 경우의 처리
+          debugPrint("오늘 또는 이전에 복용 확인된 약물입니다.: $medication");
+          // 여기에 필요한 로직을 추가하세요
+        } else {
+          // 약을 복용하지 않았거나, 미래 날짜인 경우의 처리
+          debugPrint("아직 복용하지 않았거나 미래 날짜의 약물입니다.: $medication");
+          // 여기에 필요한 로직을 추가하세요
+        }
       }
     }
 
