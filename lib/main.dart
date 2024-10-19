@@ -48,6 +48,7 @@ class MedicationProvider extends ChangeNotifier {
   List<Medication> get medications => _medications;
 
   void addMedication(Medication medication) {
+    debugPrint("for add Medication agres in main.dart: $medication");
     _medications.add(medication);
     StorageService().saveMedications(_medications);
     notifyListeners();

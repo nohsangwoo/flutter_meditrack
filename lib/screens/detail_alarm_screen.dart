@@ -16,11 +16,19 @@ class DetailAlarmScreen extends StatelessWidget {
 
     final medicationProvider = Provider.of<MedicationProvider>(context);
 
-    final medication = medicationProvider.medications.firstWhere(
-      (element) => element.hashCode == payload['id'],
-    );
+    print('payload: $payload');
 
-    debugPrint("specific medication: $medication");
+    print('medicationProvider: ${medicationProvider.medications}');
+
+    // final medicationScheduleId = payload['id'];
+
+    // final medicationScheduleId
+
+    final medication = medicationProvider.medications.firstWhere(
+      (element) => element.baseScheduleId == payload['id'],
+      orElse: () => throw Exception('Medication not found'),
+    );
+    debugPrint("specific medication in detail_alarm_screen: $medication");
 
     return Scaffold(
       appBar: AppBar(title: const Text("알람 상세페이지")),
@@ -41,16 +49,23 @@ class DetailAlarmScreen extends StatelessWidget {
             const SizedBox(height: 16),
             Text('예약된 날짜: ${payload['scheduledDate']}',
                 style: Theme.of(context).textTheme.bodyMedium),
+            Text('baseScheduleId: ${payload['baseScheduleId']}',
+                style: Theme.of(context).textTheme.bodyMedium),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: ElevatedButton.icon(
-                icon: const Icon(Icons.cancel),
+                icon: const Icon(Icons.check),
                 onPressed: () async {
-                  // await NotificationService()
-                  //     .cancelNotification(medication.hashCode);
-                  medicationProvider.deleteMedication(medication);
+                  await NotificationService()
+                      .cancelAndRescheduleMedicationNotifications(medication);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                        content: Text(
+                            '${medication.name} 복용 확인됨. 다음 날 알림이 재설정되었습니다.')),
+                  );
+                  Navigator.of(context).pop();
                 },
-                label: const Text("Remove all Notifications"),
+                label: const Text("약 복용 확인"),
               ),
             ),
           ],

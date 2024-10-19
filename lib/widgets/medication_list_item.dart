@@ -24,7 +24,7 @@ class MedicationListItem extends StatelessWidget {
       onTap: () {
         debugPrint("specific medication in medication_list_item: $medication");
         final payload = jsonEncode({
-          'id': medication.hashCode,
+          'id': medication.baseScheduleId,
           'medicationName': medication.name,
           'scheduleTime': medication.time.format(context),
         });

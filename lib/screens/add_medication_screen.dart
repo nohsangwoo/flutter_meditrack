@@ -4,6 +4,8 @@ import 'package:meditrack/main.dart';
 import 'package:provider/provider.dart';
 import '../models/medication.dart';
 import '../services/notification_service.dart';
+import 'dart:math';
+import 'package:uuid/uuid.dart';
 
 class AddMedicationScreen extends StatefulWidget {
   const AddMedicationScreen({super.key});
@@ -16,6 +18,8 @@ class AddMedicationScreenState extends State<AddMedicationScreen> {
   final _formKey = GlobalKey<FormState>();
   String _name = '';
   TimeOfDay _time = TimeOfDay.now();
+  final random = Random();
+  final uuid = const Uuid();
 
   void _showIOSTimePicker() {
     showCupertinoModalPopup<void>(
@@ -77,10 +81,18 @@ class AddMedicationScreenState extends State<AddMedicationScreen> {
               onPressed: () async {
                 if (_formKey.currentState!.validate()) {
                   _formKey.currentState!.save();
+                  final baseScheduleId = uuid.v4().hashCode & 0x7FFFFFFF;
+
                   final medication = Medication(
                     name: _name,
                     time: _time,
+                    baseScheduleId: baseScheduleId,
                   );
+
+                  debugPrint(
+                      "for add Medication agres in add_medication_screen: $medication");
+                  debugPrint(
+                      "for add Medication baseScheduleId agres in add_medication_screen: ${medication.baseScheduleId}");
                   final navigator = Navigator.of(context);
                   final medicationProvider =
                       Provider.of<MedicationProvider>(context, listen: false);
