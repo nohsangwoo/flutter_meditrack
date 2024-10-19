@@ -72,11 +72,11 @@ class DetailAlarmScreen extends StatelessWidget {
                       "originMedicationBaseScheduleId in detail_alarm_screen: $originMedicationBaseScheduleId");
                   print(
                       "nextMedication in detail_alarm_screen: $nextMedication");
-                  await NotificationService()
-                      .cancelAndRescheduleMedicationNotifications(
-                          medication, nextMedication);
+                  // await NotificationService()
+                  //     .cancelAndRescheduleMedicationNotifications(
+                  //         medication, nextMedication);
 
-                  medicationProvider.updateMedication(
+                  medicationProvider.updateMedication(medication,
                       nextMedication, originMedicationBaseScheduleId);
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(

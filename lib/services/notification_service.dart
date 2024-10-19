@@ -389,6 +389,6 @@ class NotificationService {
     //     time: medication.time,
     //     baseScheduleId: medication.baseScheduleId);
 
-    // await scheduleMedicationNotification(nextMedication, isNextDay: true);
+    await scheduleMedicationNotification(nextMedication, isNextDay: true);
   }
 }

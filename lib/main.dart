@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:meditrack/models/medication.dart';
 import 'package:meditrack/screens/detail_alarm_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:uuid/uuid.dart';
 import 'screens/home_screen.dart';
 import 'services/notification_service.dart';
 import 'services/storage_service.dart';
@@ -13,43 +14,71 @@ void callbackDispatcher() {
   Workmanager().executeTask((task, inputData) async {
     debugPrint("백그라운드 작업 실행: ${DateTime.now()}-------------------");
 
-    // StorageService 초기화
-    await StorageService().initialize();
-
-    // 약물 정보 불러오기
-    List<Medication> medications = await StorageService().loadMedications();
-
-    // 약물 정보 사용 예시
-    for (var medication in medications) {
-      debugPrint(
-          "약물 이름: ${medication.name}, 복용 시간: ${medication.time}, hasTakenMedicationToday: ${medication.hasTakenMedicationToday}, hasTakenMedicationTodayDate: ${medication.hasTakenMedicationTodayDate}");
-      // 여기에서 필요한 작업을 수행합니다.
-      // 예: 알림 확인, 복용 여부 업데이트 등
-      // #1. 약 복용확인이 체크된 경우
-      if (medication.hasTakenMedicationToday == true) {
-        // Medication.dateOnly(DateTime.now())) {
-        // medication.markAsTakenToday();
-        // await StorageService().saveMedications(medications);
-        debugPrint("약 복용만 체크된 경우: $medication");
-        // #2. 체크된 약먹은 날이 오늘이거나 이전날인경우
-        if (medication.hasTakenMedicationTodayDate != null &&
-            medication.hasTakenMedicationTodayDate!.isBefore(
-                Medication.dateOnly(DateTime.now())
-                    .add(const Duration(days: 1)))) {
-          // 오늘 또는 이전에 약을 복용한 경우의 처리
-          debugPrint("오늘 또는 이전에 복용 확인된 약물입니다.: $medication");
-          // 여기에 필요한 로직을 추가하세요
-        } else {
-          // 약을 복용하지 않았거나, 미래 날짜인 경우의 처리
-          debugPrint("아직 복용하지 않았거나 미래 날짜의 약물입니다.: $medication");
-          // 여기에 필요한 로직을 추가하세요
-        }
-      }
+    switch (task) {
+      case 'periodicTask':
+        await _performPeriodicTask();
+        break;
     }
 
     debugPrint("end of background work-------------------");
     return Future.value(true);
   });
+}
+
+Future<void> _performPeriodicTask() async {
+  final now = DateTime.now();
+  if (now.hour == 0 && now.minute < 15 || now.hour == 23 && now.minute >= 45) {
+    await _performMidnightTask();
+  }
+}
+
+Future<void> _performMidnightTask() async {
+  // 여기에 자정 무렵에 수행할 작���을 구현합니다.
+  print('자정 작업 수행 중: ${DateTime.now()}');
+
+  // StorageService 초기화
+  await StorageService().initialize();
+
+  // 약물 정보 불러오기
+  List<Medication> medications = await StorageService().loadMedications();
+
+  // 약물 정보 사용 예시
+  for (var medication in medications) {
+    const uuid = Uuid();
+
+    final originMedicationBaseScheduleId = medication.baseScheduleId;
+    final nextBaseScheduleId = uuid.v4().hashCode & 0x7FFFFFFF;
+
+    final nextMedication = Medication(
+      name: medication.name,
+      time: medication.time,
+      baseScheduleId: nextBaseScheduleId,
+      hasTakenMedicationToday: false,
+      hasTakenMedicationTodayDate: null,
+    );
+
+    debugPrint(
+        "updateMedication in _performMidnightTask-----------------------------------");
+    debugPrint("nextMedication in _performMidnightTask: $nextMedication");
+    debugPrint(
+        "originMedicationBaseScheduleId in _performMidnightTask: $originMedicationBaseScheduleId");
+
+    // StorageService를 사용하여 데이터 업데이트
+    await StorageService()
+        .updateMedication(nextMedication, originMedicationBaseScheduleId);
+
+    // NotificationService를 사용하여 알림 업데이트
+    await NotificationService()
+        .cancelAndRescheduleMedicationNotifications(medication, nextMedication);
+
+    debugPrint(
+        "end of updateMedication in _performMidnightTask-----------------------------------");
+  }
+
+  // 모든 업데이트가 완료된 후 최신 데이터 로드(최신화된 데이터를 가지고 후속 작업을 수행하고싶다면 이용하자.)
+  // medications = await StorageService().loadMedications();
+
+  // 예: 데이터 초기화, 일일 보고서 생성 등
 }
 
 void main() async {
@@ -66,9 +95,9 @@ void main() async {
 
   // 1분마다 실행되는 주기적 작업 등록
   await Workmanager().registerPeriodicTask(
-    "15",
-    "simplePeriodicTask",
-    frequency: const Duration(minutes: 1),
+    "periodicTask",
+    "periodicTask",
+    frequency: const Duration(minutes: 15),
   );
 
   runApp(const MyApp());
@@ -90,13 +119,52 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        // home: const HomeScreen(),
+        home: const LifecycleWatcher(
+          child: HomeScreen(),
+        ),
         routes: {
-          '/': (context) => const HomeScreen(),
           '/detail_alarm': (context) => const DetailAlarmScreen(),
         },
       ),
     );
+  }
+}
+
+class LifecycleWatcher extends StatefulWidget {
+  final Widget child;
+
+  const LifecycleWatcher({super.key, required this.child});
+
+  @override
+  _LifecycleWatcherState createState() => _LifecycleWatcherState();
+}
+
+class _LifecycleWatcherState extends State<LifecycleWatcher>
+    with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      // 앱이 포그라운드로 돌아올 때 데이터 새로고침
+      Provider.of<MedicationProvider>(context, listen: false)
+          .refreshMedications();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.child;
   }
 }
 
@@ -136,18 +204,20 @@ class MedicationProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateMedication(
-      Medication nextMedication, int originMedicationBaseScheduleId) async {
+  void updateMedication(Medication medication, Medication nextMedication,
+      int originMedicationBaseScheduleId) async {
     debugPrint(
         "updateMedication in main.dart-----------------------------------");
     debugPrint("nextMedication in main.dart: $nextMedication");
     debugPrint(
         "originMedicationBaseScheduleId in main.dart: $originMedicationBaseScheduleId");
+
+    await NotificationService()
+        .cancelAndRescheduleMedicationNotifications(medication, nextMedication);
     await StorageService()
         .updateMedication(nextMedication, originMedicationBaseScheduleId);
     _medications = await StorageService().loadMedications();
-    await NotificationService()
-        .scheduleMedicationNotification(nextMedication, isNextDay: true);
+
     notifyListeners();
     debugPrint(
         "end of updateMedication in main.dart-----------------------------------");
@@ -156,6 +226,11 @@ class MedicationProvider extends ChangeNotifier {
   void checkAllMedications() async {
     await StorageService().checkAllMedications();
     await NotificationService().checkActiveNotifications();
+  }
+
+  Future<void> refreshMedications() async {
+    _medications = await StorageService().loadMedications();
+    notifyListeners();
   }
 
   // void update
