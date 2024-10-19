@@ -77,7 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: ElevatedButton.icon(
               icon: const Icon(Icons.cancel),
               onPressed: () async {
-                await NotificationService().cancelAllNotifications();
+                // await NotificationService().cancelAllNotifications();
                 medicationProvider.deleteAllMedications();
               },
               label: const Text("Remove all Notifications"),

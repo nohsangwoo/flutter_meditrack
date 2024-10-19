@@ -71,6 +71,7 @@ class MedicationProvider extends ChangeNotifier {
   void deleteAllMedications() async {
     _medications = [];
     await StorageService().deleteAllMedications();
+    await NotificationService().cancelAllNotifications();
     notifyListeners();
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/medication.dart';
+import 'dart:convert';
 
 class MedicationListItem extends StatelessWidget {
   final Medication medication;
@@ -20,6 +21,15 @@ class MedicationListItem extends StatelessWidget {
         icon: const Icon(Icons.delete),
         onPressed: () => _showDeleteConfirmation(context),
       ),
+      onTap: () {
+        debugPrint("specific medication in medication_list_item: $medication");
+        final payload = jsonEncode({
+          'id': medication.hashCode,
+          'medicationName': medication.name,
+          'scheduleTime': medication.time.format(context),
+        });
+        Navigator.pushNamed(context, '/detail_alarm', arguments: payload);
+      },
     );
   }
 
