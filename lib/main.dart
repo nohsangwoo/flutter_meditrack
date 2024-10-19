@@ -11,7 +11,7 @@ import 'package:workmanager/workmanager.dart';
 @pragma('vm:entry-point')
 void callbackDispatcher() {
   Workmanager().executeTask((task, inputData) async {
-    debugPrint("백그라운드 작업 실행: ${DateTime.now()}");
+    debugPrint("백그라운드 작업 실행: ${DateTime.now()}-------------------");
 
     // StorageService 초기화
     await StorageService().initialize();
@@ -22,11 +22,19 @@ void callbackDispatcher() {
     // 약물 정보 사용 예시
     for (var medication in medications) {
       debugPrint(
-          "약물 이름: ${medication.name}, 복용 시간: ${medication.time}, hasTakenMedicationToday: ${medication.hasTakenMedicationToday}");
+          "약물 이름: ${medication.name}, 복용 시간: ${medication.time}, hasTakenMedicationToday: ${medication.hasTakenMedicationToday}, hasTakenMedicationTodayDate: ${medication.hasTakenMedicationTodayDate}");
       // 여기에서 필요한 작업을 수행합니다.
       // 예: 알림 확인, 복용 여부 업데이트 등
+      // #1. 체크된 약먹은 날이 오늘인 경우
+      if (medication.hasTakenMedicationTodayDate ==
+          Medication.dateOnly(DateTime.now())) {
+        // medication.markAsTakenToday();
+        // await StorageService().saveMedications(medications);
+        debugPrint("오늘 복용 확인된 약물 입니다.: $medication");
+      }
     }
 
+    debugPrint("end of background work-------------------");
     return Future.value(true);
   });
 }
