@@ -48,6 +48,9 @@ class DetailAlarmScreen extends StatelessWidget {
             Text(
                 'hasTakenMedicationToday: ${medication.hasTakenMedicationToday}',
                 style: Theme.of(context).textTheme.bodyMedium),
+            Text(
+                'hasTakenMedicationTodayDate: ${medication.hasTakenMedicationTodayDate}',
+                style: Theme.of(context).textTheme.bodyMedium),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: ElevatedButton.icon(
@@ -62,6 +65,8 @@ class DetailAlarmScreen extends StatelessWidget {
                     time: medication.time,
                     baseScheduleId: nextBaseScheduleId,
                     hasTakenMedicationToday: true,
+                    hasTakenMedicationTodayDate:
+                        Medication.dateOnly(DateTime.now()),
                   );
                   print(
                       "originMedicationBaseScheduleId in detail_alarm_screen: $originMedicationBaseScheduleId");
@@ -70,13 +75,15 @@ class DetailAlarmScreen extends StatelessWidget {
                   await NotificationService()
                       .cancelAndRescheduleMedicationNotifications(
                           medication, nextMedication);
+
+                  medicationProvider.updateMedication(
+                      nextMedication, originMedicationBaseScheduleId);
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                         content: Text(
                             '${medication.name} 복용 확인됨. 다음 날 알림이 재설정되었습니다.')),
                   );
-                  medicationProvider.updateMedication(
-                      nextMedication, originMedicationBaseScheduleId);
+
                   Navigator.of(context).pop();
                 },
                 label: const Text("약 복용 확인"),

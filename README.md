@@ -72,3 +72,5 @@ timezone이 일반적으로 UTC로 설정되어 있어서 한국 시간대로 �
   재설정하는 알람은 반복되는 알람인 \_scheduleFollowUpNotifications 메서드를 조건에따라 재설정한다.
 
 - ref: https://pub.dev/packages/workmanager
+
+hasTakenMedicationToday을 누른 날짜를 같이 기록한다.(day만 기록)
