@@ -1,9 +1,7 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:meditrack/models/medication.dart';
 import 'package:meditrack/providers/medication_provider.dart';
 import 'package:meditrack/screens/detail_alarm_screen.dart';
+import 'package:meditrack/widgets/with_lifecycle_watcher.dart';
 import 'package:provider/provider.dart';
 import 'screens/home_screen.dart';
 import 'services/notification_service.dart';
@@ -39,7 +37,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: const LifecycleWatcher(
+        home: const WithLifecycleWatcher(
           child: HomeScreen(),
         ),
         routes: {
@@ -47,43 +45,5 @@ class MyApp extends StatelessWidget {
         },
       ),
     );
-  }
-}
-
-class LifecycleWatcher extends StatefulWidget {
-  final Widget child;
-
-  const LifecycleWatcher({super.key, required this.child});
-
-  @override
-  LifecycleWatcherState createState() => LifecycleWatcherState();
-}
-
-class LifecycleWatcherState extends State<LifecycleWatcher>
-    with WidgetsBindingObserver {
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addObserver(this);
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      // 앱이 포그라운드로 돌아올 때 데이터 새로고침
-      Provider.of<MedicationProvider>(context, listen: false)
-          .refreshMedications();
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return widget.child;
   }
 }
