@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 
-import 'package:meditrack/main.dart';
 import 'package:meditrack/models/medication.dart';
-import 'package:meditrack/services/notification_service.dart';
+import 'package:meditrack/providers/medication_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 

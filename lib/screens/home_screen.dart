@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:meditrack/main.dart';
+import 'package:meditrack/providers/medication_provider.dart';
 import 'package:meditrack/services/notification_service.dart';
 import 'package:provider/provider.dart';
 import '../widgets/medication_list_item.dart';

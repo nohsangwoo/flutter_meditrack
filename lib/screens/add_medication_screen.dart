@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:meditrack/main.dart';
+import 'package:meditrack/providers/medication_provider.dart';
 import 'package:provider/provider.dart';
 import '../models/medication.dart';
 import 'dart:math';
