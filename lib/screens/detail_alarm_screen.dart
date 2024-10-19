@@ -86,6 +86,9 @@ class DetailAlarmScreen extends StatelessWidget {
                   );
                   medicationProvider.updateMedication(
                       nextMedication, originMedicationBaseScheduleId);
+                  await NotificationService().scheduleMedicationNotification(
+                      nextMedication,
+                      isNextDay: true);
                   Navigator.of(context).pop();
                 },
                 label: const Text("약 복용 확인"),

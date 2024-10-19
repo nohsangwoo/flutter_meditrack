@@ -117,6 +117,7 @@ class NotificationService {
     final tz.TZDateTime scheduledDate =
         _nextInstanceOfTime(medication.time, isNextDay: isNextDay);
 
+    debugPrint('-----------------------------------');
     debugPrint('scheduledDate: $scheduledDate');
 
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
@@ -130,19 +131,15 @@ class NotificationService {
     const NotificationDetails platformChannelSpecifics =
         NotificationDetails(android: androidPlatformChannelSpecifics);
 
-    final baseScheduleId = medication.baseScheduleId;
-    print('Scheduling notification with baseScheduleId: $baseScheduleId');
-    print('medication.hashCode: ${medication.baseScheduleId}');
-
     final payload = jsonEncode({
       'id': medication.baseScheduleId,
       'medicationName': medication.name,
       'scheduleTime': '${medication.time.hour}:${medication.time.minute}',
       'scheduledDate': scheduledDate.toIso8601String(),
-      'baseScheduleId': baseScheduleId,
+      'baseScheduleId': medication.baseScheduleId,
     });
 
-    // 초기 알림 예약
+    // 매일 반복되는 알람 설정
     await _flutterLocalNotificationsPlugin.zonedSchedule(
       medication.baseScheduleId,
       '약 복용 시간',
@@ -156,18 +153,37 @@ class NotificationService {
       payload: payload,
     );
 
-    // 1분 후부터 59분 동안 매분 알림 예약
+    // 1분 간격 알림을 설정하는 새로운 메서드 호출
+    await _scheduleFollowUpNotifications(
+        medication, scheduledDate, platformChannelSpecifics, payload);
+  }
+
+  // 새로운 메서드: 1분 간격 알림 설정
+  Future<void> _scheduleFollowUpNotifications(
+      Medication medication,
+      tz.TZDateTime scheduledDate,
+      NotificationDetails platformChannelSpecifics,
+      String payload) async {
+    final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
+    final Duration timeUntilScheduled = scheduledDate.difference(now);
+
+    if (timeUntilScheduled.isNegative) {
+      // 이미 지난 시간이면 다음 날로 설정
+      scheduledDate = scheduledDate.add(const Duration(days: 1));
+    }
+
     for (int i = 1; i <= 3; i++) {
+      final tz.TZDateTime followUpTime =
+          scheduledDate.add(Duration(minutes: i));
       await _flutterLocalNotificationsPlugin.zonedSchedule(
         medication.baseScheduleId + i,
         '약 복용 알림',
         '${medication.name} 복용을 잊지 마세요',
-        scheduledDate.add(Duration(minutes: i)),
+        followUpTime,
         platformChannelSpecifics,
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
-        matchDateTimeComponents: DateTimeComponents.time,
         payload: payload,
       );
     }
@@ -185,10 +201,10 @@ class NotificationService {
     );
 
     if (isNextDay) {
+      // 무조건 다음 날로 설정
       scheduledDate = scheduledDate.add(const Duration(days: 1));
-    }
-
-    if (scheduledDate.isBefore(now)) {
+    } else if (scheduledDate.isBefore(now)) {
+      // 현재 시간보다 이전이면 다음 날로 설정
       scheduledDate = scheduledDate.add(const Duration(days: 1));
     }
 
@@ -285,7 +301,7 @@ class NotificationService {
         title,
         body,
         tz.TZDateTime.now(tz.local)
-            .add(const Duration(seconds: 5)), // 5초 후에 알림 예약
+            .add(const Duration(seconds: 5)), // 5초 에 알림 예약
         const NotificationDetails(
             android: AndroidNotificationDetails(
                 'channel 3', 'your channel name',
@@ -322,7 +338,7 @@ class NotificationService {
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails(
       'daily_notification_channel',
-      '일일 알림',
+      '일 알림',
       channelDescription: '매일 정해진 시간에 알림을 보냅니다',
       importance: Importance.max,
       priority: Priority.high,
