@@ -79,3 +79,16 @@ hasTakenMedicationToday을 누른 날짜를 같이 기록한다.(day만 기록)
 
 - 대안: FCM으로 기능 통일하기.
 - usage는 background_service.dart에 남겨둠 시~발~
+
+# FCM 대안내용.
+
+- 1. 약 복용 버튼을 클릭하면 기록과 함께 반복알람 부분만 모두 취소됨
+     (notification_service.dart의 \_scheduleFollowUpNotification 참고)
+- 2. FCM은 매일 자정 00:00:00에 알람을 예약함
+
+- 3. FCM으로 인해 취소된 알람을 다시 등록.
+     간단히 말해서 매일 자정 FCM으로 반복알람을 다시 등록하는것
+
+- 이유: flutter_local_notifications.dart가 일시정지 기능을 제공해주지 않기 때문이다.
+  또한 이 작업을 백그라운드로 작업을 진행하려했더니 android와 ios에서 한개의 모듈로 제어하기 어려움.
+  따라서 유지 보수 측면에서도 FCM으로 작업을 진행하는것이 좋다.

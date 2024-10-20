@@ -12,6 +12,13 @@ class NotificationService {
   NotificationService._internal();
   static final onClickNotification = BehaviorSubject<String>();
 
+  // 반복알람 등록 및 취소시 사용되는 변수
+  // 최대 반복알람 갯수
+  static const int maxFollowUpNotifications = 10;
+
+  // 반복알람의 등록되는 간격(분)
+  static const int followUpIntervalMinutes = 15;
+
   // on tap on any notification
   static void onNotificationTap(NotificationResponse notificationResponse) {
     print("알림이 탭되었습니다");
@@ -90,26 +97,6 @@ class NotificationService {
         );
   }
 
-  Future<void> requestPermissions() async {
-    final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
-        _flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>();
-
-    final bool? granted =
-        await androidImplementation?.requestNotificationsPermission();
-    debugPrint('알림 권한 청 결과: $granted');
-
-    final bool? result = await _flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            IOSFlutterLocalNotificationsPlugin>()
-        ?.requestPermissions(
-          alert: true,
-          badge: true,
-          sound: true,
-        );
-    debugPrint('iOS 알림 권한 요청 결과: $result');
-  }
-
   Future<void> scheduleMedicationNotification(Medication medication,
       {bool isNextDay = false}) async {
     final tz.TZDateTime scheduledDate =
@@ -152,29 +139,41 @@ class NotificationService {
 
     // 1분 간격 알림을 설정하는 새로운 메서드 호출
     await _scheduleFollowUpNotifications(
-        medication, scheduledDate, platformChannelSpecifics, payload);
+        medication, scheduledDate, platformChannelSpecifics,
+        isNextDay: isNextDay);
 
     debugPrint(
         'end of scheduleMedicationNotification-----------------------------------');
   }
 
   // 새로운 메서드: 1분 간격 알림 설정
-  Future<void> _scheduleFollowUpNotifications(
-      Medication medication,
-      tz.TZDateTime scheduledDate,
-      NotificationDetails platformChannelSpecifics,
-      String payload) async {
+  Future<void> _scheduleFollowUpNotifications(Medication medication,
+      tz.TZDateTime scheduledDate, NotificationDetails platformChannelSpecifics,
+      {bool isNextDay = false}) async {
     final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
     final Duration timeUntilScheduled = scheduledDate.difference(now);
 
-    if (timeUntilScheduled.isNegative) {
+// 기본적으로는 매일 반복이다가 isNextDay의 경우에는
+    if (timeUntilScheduled.isNegative || isNextDay) {
       // 이미 지난 시간이면 다음 날로 설정
+      // 그리고 isNextDay가 true일때도 다음 날로 설정
+
       scheduledDate = scheduledDate.add(const Duration(days: 1));
     }
 
-    for (int i = 1; i <= 10; i++) {
+    for (int i = 1; i <= maxFollowUpNotifications; i++) {
       final tz.TZDateTime followUpTime =
-          scheduledDate.add(const Duration(minutes: 30));
+          scheduledDate.add(Duration(minutes: followUpIntervalMinutes * i));
+      final payload = jsonEncode({
+        'baseScheduleId': medication.baseScheduleId,
+        'medicationName': medication.name,
+        'scheduledDate': followUpTime.toIso8601String(),
+      });
+      debugPrint('payload check in _scheduleFollowUpNotifications: $payload');
+      debugPrint(
+          'id check in _scheduleFollowUpNotifications: ${medication.baseScheduleId + i}');
+      debugPrint(
+          'followUpTime check in _scheduleFollowUpNotifications: $followUpTime');
       await _flutterLocalNotificationsPlugin.zonedSchedule(
         medication.baseScheduleId + i,
         '약 복용 알림',
@@ -184,6 +183,7 @@ class NotificationService {
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
+        matchDateTimeComponents: DateTimeComponents.time,
         payload: payload,
       );
     }
@@ -246,7 +246,7 @@ class NotificationService {
   }
 
   Future<void> cancelNotification(int baseScheduleId) async {
-    for (int i = 0; i <= 10; i++) {
+    for (int i = 0; i <= maxFollowUpNotifications; i++) {
       await _flutterLocalNotificationsPlugin.cancel(baseScheduleId + i);
     }
   }
@@ -368,26 +368,7 @@ class NotificationService {
     await cancelNotification(medication.baseScheduleId);
 
     debugPrint("current medication: $medication");
-    // const uuid = Uuid();
-
-    // final nextBaseScheduleId = uuid.v4().hashCode & 0x7FFFFFFF;
-
-    // final nextMedication = Medication(
-    //   name: medication.name,
-    //   time: medication.time,
-    //   baseScheduleId: nextBaseScheduleId,
-    // );
-
     debugPrint("nextMedication: $nextMedication");
-    // 다음 날 같은 시간으로 새로운 알림 예약
-    // final tz.TZDateTime nextDay =
-    //     _nextInstanceOfTime(medication.time).add(const Duration(days: 1));
-
-    // debugPrint('nextDay: $nextDay');
-    // final nextMedication = Medication(
-    //     name: medication.name,
-    //     time: medication.time,
-    //     baseScheduleId: medication.baseScheduleId);
 
     await scheduleMedicationNotification(nextMedication, isNextDay: true);
   }

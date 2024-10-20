@@ -11,7 +11,7 @@ import 'services/storage_service.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await NotificationService().initialize();
-  await NotificationService().requestPermissions();
+  // await NotificationService().requestPermissions();
   await StorageService().initialize();
 
   // Workmanager 초기화 (필요시 주석 해제)
