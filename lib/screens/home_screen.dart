@@ -58,8 +58,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 : ListView.builder(
                     itemCount: medicationProvider.medications.length,
                     itemBuilder: (context, index) {
+                      final sortedMedications =
+                          List.from(medicationProvider.medications)
+                            ..sort((a, b) {
+                              final aMinutes = a.time.hour * 60 + a.time.minute;
+                              final bMinutes = b.time.hour * 60 + b.time.minute;
+                              return aMinutes.compareTo(bMinutes);
+                            });
                       return MedicationListItem(
-                        medication: medicationProvider.medications[index],
+                        medication: sortedMedications[index],
                         onDelete: (medication) {
                           medicationProvider.deleteMedication(medication);
                         },
