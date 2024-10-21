@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:meditrack/utils/%20time_formatter.dart';
 import 'dart:convert';
 import 'package:uuid/uuid.dart';
 
@@ -105,7 +106,7 @@ class _DetailAlarmScreenState extends State<DetailAlarmScreen>
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          _formatTime(medication.time),
+                          formatTime(medication.time),
                           style: Theme.of(context)
                               .textTheme
                               .headlineSmall
@@ -210,14 +211,5 @@ class _DetailAlarmScreenState extends State<DetailAlarmScreen>
         ),
       ),
     );
-  }
-
-  String _formatTime(TimeOfDay time) {
-    final hour = time.hour;
-    final minute = time.minute.toString().padLeft(2, '0');
-    final period = hour < 12 ? '오전' : '오후';
-    final formattedHour = (hour % 12 == 0 ? 12 : hour % 12).toString();
-
-    return '$period $formattedHour:$minute';
   }
 }

@@ -14,7 +14,7 @@ class NotificationService {
 
   // 반복알람 등록 및 취소시 사용되는 변수
   // 최대 반복알람 갯수
-  static const int maxFollowUpNotifications = 10;
+  static const int maxFollowUpNotifications = 2;
 
   // 반복알람의 등록되는 간격(분)
   static const int followUpIntervalMinutes = 15;

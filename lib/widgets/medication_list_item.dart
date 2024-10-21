@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:meditrack/utils/%20time_formatter.dart';
 import '../models/medication.dart';
 import 'dart:convert';
 
@@ -23,7 +24,8 @@ class MedicationListItem extends StatelessWidget {
         style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
       ),
       subtitle: Text(
-        '복용 시간: ${medication.time.format(context)}',
+        // '복용 시간: ${medication.time.format(context)}',
+        formatTime(medication.time),
         style: const TextStyle(fontSize: 16),
       ),
       trailing: Row(
