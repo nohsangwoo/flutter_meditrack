@@ -111,3 +111,27 @@ flutter pub run flutter_native_splash:create
 flutter pub run flutter_native_splash:remove
 
 flutter pub run flutter_native_splash:create
+
+# 개인정보 처리방침 url 만들기
+
+- ref: https://www.privacy.go.kr/front/per/inf/perInfStep01.do
+
+# keystore 생성
+
+keytool을 이용하여 keystore 생성
+
+```
+생성되는 이름과 경로 그리고 aslias를 각각 지정할 수 있음, 예시를 위해 두가지 버전의 명령어를 남겨둠
+
+keytool -genkey -v -keystore upload-keystore.jks -keyalg RSA -keysize 2048 -validity 10000 -alias upload
+
+keytool -genkey -v -keystore ~/key.jks -keyalg RSA -keysize 2048 -validity 10000 -alias key
+```
+
+키스토어로 생성된 파일을 이용해서 앱 빌드 진행
+android/app/build.gradle에 키스토어 파일 불러오는 방법 추가함(레퍼런스 잡아둠)
+
+# android 배포
+
+- flutter build appbundle
+- flutter build appbundle --release
