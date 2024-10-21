@@ -14,12 +14,28 @@ class MedicationListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isTodayMedicationTaken = medication.hasTakenMedicationTodayDate ==
+        Medication.dateOnly(DateTime.now());
+
     return ListTile(
-      title: Text(medication.name),
-      subtitle: Text('복용 시간: ${medication.time.format(context)}'),
-      trailing: IconButton(
-        icon: const Icon(Icons.delete),
-        onPressed: () => _showDeleteConfirmation(context),
+      title: Text(
+        medication.name,
+        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+      ),
+      subtitle: Text(
+        '복용 시간: ${medication.time.format(context)}',
+        style: const TextStyle(fontSize: 16),
+      ),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (isTodayMedicationTaken)
+            const Icon(Icons.check_circle, color: Colors.green, size: 30),
+          IconButton(
+            icon: const Icon(Icons.delete, size: 30),
+            onPressed: () => _showDeleteConfirmation(context),
+          ),
+        ],
       ),
       onTap: () {
         debugPrint("specific medication in medication_list_item: $medication");

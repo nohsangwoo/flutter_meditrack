@@ -146,7 +146,7 @@ class NotificationService {
         'end of scheduleMedicationNotification-----------------------------------');
   }
 
-  // 새로운 메서드: 1분 간격 알림 설정
+  // 새로운 메서드: 반복 알림 설정
   Future<void> _scheduleFollowUpNotifications(Medication medication,
       tz.TZDateTime scheduledDate, NotificationDetails platformChannelSpecifics,
       {bool isNextDay = false}) async {
@@ -155,7 +155,7 @@ class NotificationService {
 
 // 기본적으로는 매일 반복이다가 isNextDay의 경우에는
     if (timeUntilScheduled.isNegative || isNextDay) {
-      // 이미 지난 시간이면 다음 날로 설정
+      // 이미 지난 시간이면 다음 날로 설정... 하고싶은데 지금은 네이티브가 아니라 안됨.
       // 그리고 isNextDay가 true일때도 다음 날로 설정
 
       scheduledDate = scheduledDate.add(const Duration(days: 1));
@@ -169,11 +169,6 @@ class NotificationService {
         'medicationName': medication.name,
         'scheduledDate': followUpTime.toIso8601String(),
       });
-      debugPrint('payload check in _scheduleFollowUpNotifications: $payload');
-      debugPrint(
-          'id check in _scheduleFollowUpNotifications: ${medication.baseScheduleId + i}');
-      debugPrint(
-          'followUpTime check in _scheduleFollowUpNotifications: $followUpTime');
       await _flutterLocalNotificationsPlugin.zonedSchedule(
         medication.baseScheduleId + i,
         '약 복용 알림',
