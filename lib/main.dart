@@ -10,6 +10,7 @@ import 'services/storage_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   await NotificationService().initialize();
   // await NotificationService().requestPermissions();
   await StorageService().initialize();
