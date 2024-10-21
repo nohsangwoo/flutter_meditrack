@@ -100,3 +100,14 @@ hasTakenMedicationToday을 누른 날짜를 같이 기록한다.(day만 기록)
 - 알람은 지금처럼 반복되게 설정 유지
 - 로그 기능을 추가할것임,
 - 약먹은 시간 기록을 하단에 리스트 형태로 남기기
+
+# flutter_native_splash
+
+패키지 실행
+flutter pub run flutter_native_splash:create
+
+설정을 변경했을 때
+
+flutter pub run flutter_native_splash:remove
+
+flutter pub run flutter_native_splash:create
