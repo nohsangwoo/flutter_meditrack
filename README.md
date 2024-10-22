@@ -135,3 +135,5 @@ android/app/build.gradle에 키스토어 파일 불러오는 방법 추가함(�
 
 - flutter build appbundle
 - flutter build appbundle --release
+
+- ref: https://luvris2.tistory.com/832

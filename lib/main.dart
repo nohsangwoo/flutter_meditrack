@@ -35,6 +35,7 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: '약 복용 알림',
+        debugShowCheckedModeBanner: false,
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
