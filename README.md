@@ -2,6 +2,25 @@
 
 A personalized medication reminder app that helps users who often forget to take their medications on time. This simple yet effective tool sends customized alerts to ensure timely medication intake, making it highly useful for those who struggle with remembering their medication schedules.
 
+# 목적
+
+- 전체적인 배포 흐름을 파악하기 위한 프로젝트
+- 한 10개정도 배포해보면 배포 흐름 익숙해질듯
+- 심사받고 귀찮은내용들이 많다
+
+# preview
+
+![alt text](<Simulator Screenshot - iPhone 16 Pro Max - 2024-10-22 at 18.24.56.png>)
+![alt text](<Simulator Screenshot - iPhone 16 Pro Max - 2024-10-22 at 18.25.03.png>)
+![alt text](<Simulator Screenshot - iPhone 16 Pro Max - 2024-10-22 at 18.25.06.png>)
+![alt text](<Simulator Screenshot - iPhone 16 Pro Max - 2024-10-22 at 18.25.31.png>)
+![alt text](<Simulator Screenshot - iPhone 16 Pro Max - 2024-10-22 at 18.25.37.png>)
+![alt text](<Simulator Screenshot - iPhone 16 Pro Max - 2024-10-22 at 18.25.44.png>)
+
+# deploy
+
+- 앱이름: 약시간 배포완료 ㅋㅋ
+
 # android setting reference
 
 - android/build.gradle
@@ -137,3 +156,5 @@ android/app/build.gradle에 키스토어 파일 불러오는 방법 추가함(�
 - flutter build appbundle --release
 
 - ref: https://luvris2.tistory.com/832
+
+빌드 파일 위치: build/app/outputs/bundle/release/app-release.aab
