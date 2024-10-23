@@ -10,12 +10,17 @@ A personalized medication reminder app that helps users who often forget to take
 
 # preview
 
-![alt text](<Simulator Screenshot - iPhone 16 Pro Max - 2024-10-22 at 18.24.56.png>)
-![alt text](<Simulator Screenshot - iPhone 16 Pro Max - 2024-10-22 at 18.25.03.png>)
-![alt text](<Simulator Screenshot - iPhone 16 Pro Max - 2024-10-22 at 18.25.06.png>)
-![alt text](<Simulator Screenshot - iPhone 16 Pro Max - 2024-10-22 at 18.25.31.png>)
-![alt text](<Simulator Screenshot - iPhone 16 Pro Max - 2024-10-22 at 18.25.37.png>)
-![alt text](<Simulator Screenshot - iPhone 16 Pro Max - 2024-10-22 at 18.25.44.png>)
+<p float="left">
+  <img src="Simulator Screenshot - iPhone 16 Pro Max - 2024-10-22 at 18.24.56.png" width="30%" />
+  <img src="Simulator Screenshot - iPhone 16 Pro Max - 2024-10-22 at 18.25.03.png" width="30%" />
+  <img src="Simulator Screenshot - iPhone 16 Pro Max - 2024-10-22 at 18.25.06.png" width="30%" />
+</p>
+
+<p float="left">
+  <img src="Simulator Screenshot - iPhone 16 Pro Max - 2024-10-22 at 18.25.31.png" width="30%" />
+  <img src="Simulator Screenshot - iPhone 16 Pro Max - 2024-10-22 at 18.25.37.png" width="30%" />
+  <img src="Simulator Screenshot - iPhone 16 Pro Max - 2024-10-22 at 18.25.44.png" width="30%" />
+</p>
 
 # deploy
 
