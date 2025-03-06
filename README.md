@@ -1,14 +1,16 @@
-# meditrack
 
-A personalized medication reminder app that helps users who often forget to take their medications on time. This simple yet effective tool sends customized alerts to ensure timely medication intake, making it highly useful for those who struggle with remembering their medication schedules.
 
-# 목적
+# MediTrack
 
-- 전체적인 배포 흐름을 파악하기 위한 프로젝트
-- 한 10개정도 배포해보면 배포 흐름 익숙해질듯
-- 심사받고 귀찮은내용들이 많다
+MediTrack은 사용자가 약 복용 일정을 잊지 않도록 돕는 개인화된 약물 알림 애플리케이션입니다. 이 간단하면서도 효과적인 도구는 사용자 맞춤형 알림을 제공하여 약 복용 시간을 정확히 지킬 수 있도록 지원하며, 특히 약 복용 스케줄을 기억하기 어려운 사용자에게 유용합니다.
 
-# preview
+## 목적
+
+- 애플리케이션 배포 흐름을 익히기 위한 연습 프로젝트
+- 약 10회 이상의 배포를 통해 배포 프로세스 숙달 목표
+- 앱 심사 과정에서 발생하는 번거로운 요소 경험 및 대응
+
+## 미리보기 (Preview)
 
 <p float="left">
   <img src="Simulator Screenshot - iPhone 16 Pro Max - 2024-10-22 at 18.24.56.png" width="30%" />
@@ -22,144 +24,128 @@ A personalized medication reminder app that helps users who often forget to take
   <img src="Simulator Screenshot - iPhone 16 Pro Max - 2024-10-22 at 18.25.44.png" width="30%" />
 </p>
 
-# deploy
+## 배포 정보
 
-- 앱이름: 약시간 배포완료 ㅋㅋ
+- 앱 이름: 약시간 (Yaksigan)
+- 배포 상태: 완료
 
-# android setting reference
+## 설정 참고 자료
 
-- android/build.gradle
-- android/app/build.gradle
-- android/app/src/main/AndroidManifest.xml
+### Android 설정
+- `android/build.gradle`
+- `android/app/build.gradle`
+- `android/app/src/main/AndroidManifest.xml`
 
-# ios setting reference
+### iOS 설정
+- 참고: [flutter_local_notifications 예제](https://github.com/MaikuB/flutter_local_notifications/blob/master/flutter_local_notifications/example/ios/Runner/AppDelegate.swift)
+- `ios/Runner/AppDelegate.swift`
 
-- ref: https://github.com/MaikuB/flutter_local_notifications/blob/master/flutter_local_notifications/example/ios/Runner/AppDelegate.swift
+## 사용 모듈
 
-- ios/Runner/AppDelegate.swift
+- `flutter_local_notifications`: 로컬 알림 기능 제공 ([참고](https://pub.dev/packages/flutter_local_notifications))
+- `timezone`: 시간대 관리 ([참고](https://pub.dev/packages/timezone))
+- `rxdart`: 반응형 프로그래밍 지원 ([참고](https://pub.dev/packages/rxdart))
 
-# modules
+## 문제 및 해결 (Issues)
 
-- flutter_local_notifications - ref: https://pub.dev/packages/flutter_local_notifications
-- flutter timezone - ref: https://pub.dev/packages/timezone
-- rxdart - ref: https://pub.dev/packages/rxdart
-
-# issue - 1
-
+### 문제 1: iOS 빌드 실패
 ```
 Failed to build iOS app
-Could not build the precompiled application for the device.
 Error (Xcode): double-quoted include "ActionEventSink.h" in framework header, expected angle-bracketed instead
-/Users/nohsangwoo/Documents/project/meditrack/ios/Pods/Target%20Support%20Files/flutter_local_notifications/flutter_local_notifications-umbrella.h:12:8
-
 Error (Xcode): 'Flutter/Flutter.h' file not found
-/Users/nohsangwoo/.pub-cache/hosted/pub.dev/flutter_local_notifications-17.2.3/ios/Classes/ActionEventSink.h:12:8
-
-Error (Xcode): (fatal) could not build module 'flutter_local_notifications'
-/Users/nohsangwoo/Library/Developer/Xcode/DerivedData/Runner-eyugalixibunstcaofnvzpdcrcru/Build/Intermediates.noindex/Pods.build/Debug-iphoneos/flutter_local_notifications.build/VerifyModule/flutter_local_notifications_objective-c_arm64-apple-ios12.0_gnu11/Test/Test.framework/Headers/Test.h:0:8
-
-Error (Xcode): (fatal) could not build module 'Test'
-/Users/nohsangwoo/Library/Developer/Xcode/DerivedData/Runner-eyugalixibunstcaofnvzpdcrcru/Build/Intermediates.noindex/Pods.build/Debug-iphoneos/flutter_local_notifications.build/VerifyModule/flutter_local_notifications_objective-c_arm64-apple-ios12.0_gnu11/Test/Test.m:0:8
-2
-
-Error launching application on Nohs iphone.
+Error launching application on Nohs iPhone.
 ```
+- 원인: `flutter_local_notifications` 모듈의 헤더 파일 참조 오류
+- 해결: Xcode 설정 및 Podfile 점검 필요 (추가 조치 필요 시 문서화 예정)
 
-![alt text](image.png)
+### 문제 2: 시간대 설정
+- 문제: 기본 시간대가 UTC로 설정되어 한국 시간대(Asia/Seoul)와 불일치
+- 해결:
+  ```dart
+  tz.setLocalLocation(tz.getLocation('Asia/Seoul')); // 한국 시간대 설정
+  ```
 
-# issue - 2
+## 할 일 (To-Do)
 
-timezone이 일반적으로 UTC로 설정되어 있어서 한국 시간대로 설정해줘야함.
+- [x] 영구 저장소 데이터와 Provider 연동 문제 해결 (앱 재시작 시 데이터 유지)
+- [x] 알림 클릭 시 상세 페이지로 이동 및 알림 종료 기능 추가
+- [ ] 알림 종료 전 5분 주기 반복 알림 설정
+- [x] 앱 아이콘 추가
+- [ ] 앱 스토어 배포 준비
+- [ ] 약 삭제 기능 구현
+- [ ] 알림 재설정 기능 구현 (`cancelAndRescheduleMedicationNotifications` 타겟)
 
-```
-    tz.setLocalLocation(tz.getLocation('Asia/Seoul')); // 한국 시간대로 설정
-```
+## 백그라운드 작업: Workmanager 활용
 
-# todos
+### 목표
+- 매일 약 복용 여부(`hasTakenMedicationToday`) 확인 후 알림 재설정
+- 조건에 따라 `_scheduleFollowUpNotifications` 메서드 재실행
 
-- 영구저장소에 저장된 기록이 실제로는 파일로 저장된 상태인데 앱을껐다 켜면 provider와 연동이 안됨. ✅
-- 알람을 클릭하면 알람 상세페이지로 이동 후 알람이 꺼지는 기능 추가 ✅
-- 알람이 꺼지기전까지 5분주기로 계속 알람이 울리게 설정.
+### 참고
+- [Workmanager 패키지](https://pub.dev/packages/workmanager)
 
-- 아이콘 추가 ✅
-- app 배포 준비
+### 제한사항
+- Workmanager는 Android에서만 동작, iOS 미지원
+- 대안: FCM(Firebase Cloud Messaging)으로 통합
 
-- 지우는 기능 먼저 구현
-- 그다음 알람 재설정 기능 구현(지우고 다시 재설정 하는 형식이라 지우는 기능 먼저 구현해야함)
-  (target: cancelAndRescheduleMedicationNotifications in notification_service.dart)
+## FCM 대안 전략
 
-# workmanager를 이용하여 일정시간마다 체크해서 매일 알람을 재설정하는 기능 구현하기
+### 계획
+1. 약 복용 버튼 클릭 시 기록 저장 및 반복 알림(`_scheduleFollowUpNotifications`) 취소
+2. FCM으로 매일 자정(00:00:00)에 알림 예약
+3. 취소된 반복 알림을 FCM으로 재등록
 
-- provider로 등록된 모든 알람에서 오늘 복용체크가 완료됐는지 확인하는 변수를 확인한다.
-  (변수이름은 hasTakenMedicationToday)
-- 만약 오늘 복용체크가 완료됐다면 알람을 재설정하고 완료되지 않았다면 알람을 그대로 둔다
-  재설정하는 알람은 반복되는 알람인 \_scheduleFollowUpNotifications 메서드를 조건에따라 재설정한다.
+### 이유
+- `flutter_local_notifications`는 알림 일시정지 기능 미지원
+- 백그라운드 작업의 Android/iOS 통합 어려움
+- 유지보수 효율성 증대
 
-- ref: https://pub.dev/packages/workmanager
+### 단점
+- 네트워크 요청 실패 시 알림 누락 가능성
 
-hasTakenMedicationToday을 누른 날짜를 같이 기록한다.(day만 기록)
+## 개선된 기획 방향
 
-# workmanager의경우 android에서만 적용됨 ios에서는 적용안됨
+- 알림: 기존 반복 설정 유지
+- 로그 기능 추가: 약 복용 시간 리스트 형식으로 하단에 기록
+- 향후 필요 시 네이티브 알림 일시정지 기능 도입検討
 
-- 대안: FCM으로 기능 통일하기.
-- usage는 background_service.dart에 남겨둠 시~발~
+## Flutter Native Splash 설정
 
-# FCM 대안내용.
+### 실행 명령어
+- 생성: `flutter pub run flutter_native_splash:create`
+- 제거 후 재생성:
+  ```
+  flutter pub run flutter_native_splash:remove
+  flutter pub run flutter_native_splash:create
+  ```
 
-- 1. 약 복용 버튼을 클릭하면 기록과 함께 반복알람 부분만 모두 취소됨
-     (notification_service.dart의 \_scheduleFollowUpNotification 참고)
-- 2. FCM은 매일 자정 00:00:00에 알람을 예약함
+## 개인정보 처리방침 URL 생성
 
-- 3. FCM으로 인해 취소된 알람을 다시 등록.
-     간단히 말해서 매일 자정 FCM으로 반복알람을 다시 등록하는것
+- 참고: [개인정보보호 포털](https://www.privacy.go.kr/front/per/inf/perInfStep01.do)
 
-- 이유: flutter_local_notifications.dart가 일시정지 기능을 제공해주지 않기 때문이다.
-  또한 이 작업을 백그라운드로 작업을 진행하려했더니 android와 ios에서 한개의 모듈로 제어하기 어려움.
-  따라서 유지 보수 측면에서도 FCM으로 작업을 진행하는것이 좋다.
+## Keystore 생성
 
-- FCM으로 설정하면 네트워크요청이 안되는경우 알람이 울리지 않으니깐.
-
-# 알람은 매일 반복되게 설정하고 - 기록을 남기는쪽으로 기획을 틀자, 나중에 니즈가 많아지면 네이티브로 알람일시정지 기능을 추가해보기
-
-- 알람은 지금처럼 반복되게 설정 유지
-- 로그 기능을 추가할것임,
-- 약먹은 시간 기록을 하단에 리스트 형태로 남기기
-
-# flutter_native_splash
-
-패키지 실행
-flutter pub run flutter_native_splash:create
-
-설정을 변경했을 때
-
-flutter pub run flutter_native_splash:remove
-
-flutter pub run flutter_native_splash:create
-
-# 개인정보 처리방침 url 만들기
-
-- ref: https://www.privacy.go.kr/front/per/inf/perInfStep01.do
-
-# keystore 생성
-
-keytool을 이용하여 keystore 생성
-
-```
-생성되는 이름과 경로 그리고 aslias를 각각 지정할 수 있음, 예시를 위해 두가지 버전의 명령어를 남겨둠
-
+### 명령어
+```bash
+# 기본 예시
 keytool -genkey -v -keystore upload-keystore.jks -keyalg RSA -keysize 2048 -validity 10000 -alias upload
 
+# 경로 지정 예시
 keytool -genkey -v -keystore ~/key.jks -keyalg RSA -keysize 2048 -validity 10000 -alias key
 ```
 
-키스토어로 생성된 파일을 이용해서 앱 빌드 진행
-android/app/build.gradle에 키스토어 파일 불러오는 방법 추가함(레퍼런스 잡아둠)
+### 설정
+- 생성된 Keystore 파일을 `android/app/build.gradle`에 적용 (참고 문서화 완료)
 
-# android 배포
+## Android 배포
 
-- flutter build appbundle
-- flutter build appbundle --release
+### 빌드 명령어
+- `flutter build appbundle`
+- `flutter build appbundle --release`
 
-- ref: https://luvris2.tistory.com/832
+### 빌드 파일 위치
+- `build/app/outputs/bundle/release/app-release.aab`
 
-빌드 파일 위치: build/app/outputs/bundle/release/app-release.aab
+### 참고 자료
+- [Android 배포 가이드](https://luvris2.tistory.com/832)
+
