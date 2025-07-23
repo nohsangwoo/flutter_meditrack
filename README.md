@@ -155,11 +155,29 @@ keytool -genkey -v -keystore ~/key.jks -keyalg RSA -keysize 2048 -validity 10000
 키스토어로 생성된 파일을 이용해서 앱 빌드 진행
 android/app/build.gradle에 키스토어 파일 불러오는 방법 추가함(레퍼런스 잡아둠)
 
-# android 배포
 
-- flutter build appbundle
-- flutter build appbundle --release
+# android
+
+1. 수정
+2. pubspec.yaml 파일의 version 값을 변경하고, 버전 번호를 증가시키세요.
+3. flutter clean
+4. flutter build appbundle
+5. flutter build appbundle --release --obfuscate --split-debug-info=build/symbols 
+(경고 해결)
+
+6. 번들된 파일을 새버전으로 게시하여 검사
 
 - ref: https://luvris2.tistory.com/832
 
 빌드 파일 위치: build/app/outputs/bundle/release/app-release.aab
+
+
+
+7. 에뮬레이터 실행 후 
+# 그냥 플러터 실행
+flutter run  
+flutter run -d (디버깅? 디버그 모드?)
+flutter run -d 00008130-0004543201F0001C (마지막은 아이디 필요함)
+
+# 무수히 많은 flutter E/FrameEvents( 5424): updateAcquireFence: Did not find frame. 로그 안보이게
+flutter run | grep -v "updateAcquireFence"
