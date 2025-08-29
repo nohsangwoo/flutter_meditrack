@@ -1,151 +1,209 @@
+# MediConnect - 한국 의료관광 플랫폼 모바일 앱
 
+한국의 병원 정보를 제공하고 의료관광을 지원하는 Flutter 모바일 앱입니다.
 
-# MediTrack
+## 🎯 주요 기능
 
-MediTrack은 사용자가 약 복용 일정을 잊지 않도록 돕는 개인화된 약물 알림 애플리케이션입니다. 이 간단하면서도 효과적인 도구는 사용자 맞춤형 알림을 제공하여 약 복용 시간을 정확히 지킬 수 있도록 지원하며, 특히 약 복용 스케줄을 기억하기 어려운 사용자에게 유용합니다.
+### ✅ 구현 완료
+- **인증 시스템**: Supabase Auth를 사용한 로그인/회원가입
+- **모던한 UI**: Liquid Glass 컨셉의 iOS 스타일 디자인
+- **홈 화면**: 병원 검색, 추천 병원, 병원 목록
+- **바텀 네비게이션**: 5개 탭 (홈, 프로모션, 예약내역, 광고문의, 내정보)
+- **프로필 관리**: 사용자 정보 및 로그아웃 기능
+- **반응형 애니메이션**: 부드러운 전환 효과
 
-## 목적
+### 🚧 구현 예정
+- 병원 상세 정보
+- 프로모션 목록 및 상세
+- 예약 시스템
+- 리뷰 작성 및 관리
+- 다국어 지원 (한국어, 영어, 중국어, 일본어)
+- 지도 연동
+- 결제 시스템
 
-- 애플리케이션 배포 흐름을 익히기 위한 연습 프로젝트
-- 약 10회 이상의 배포를 통해 배포 프로세스 숙달 목표
-- 앱 심사 과정에서 발생하는 번거로운 요소 경험 및 대응
+## 🛠 기술 스택
 
-## 미리보기 (Preview)
+- **Framework**: Flutter 3.5.3+
+- **State Management**: Riverpod
+- **Backend**: Supabase (인증, 데이터베이스)
+- **UI Design**: Material 3 + Custom Glass Effects
+- **HTTP Client**: Dio
+- **폰트**: Google Fonts (Noto Sans)
+- **로컬 저장소**: SharedPreferences
 
-<p float="left">
-  <img src="Simulator Screenshot - iPhone 16 Pro Max - 2024-10-22 at 18.24.56.png" width="30%" />
-  <img src="Simulator Screenshot - iPhone 16 Pro Max - 2024-10-22 at 18.25.03.png" width="30%" />
-  <img src="Simulator Screenshot - iPhone 16 Pro Max - 2024-10-22 at 18.25.06.png" width="30%" />
-</p>
+## 📱 화면 구성
 
-<p float="left">
-  <img src="Simulator Screenshot - iPhone 16 Pro Max - 2024-10-22 at 18.25.31.png" width="30%" />
-  <img src="Simulator Screenshot - iPhone 16 Pro Max - 2024-10-22 at 18.25.37.png" width="30%" />
-  <img src="Simulator Screenshot - iPhone 16 Pro Max - 2024-10-22 at 18.25.44.png" width="30%" />
-</p>
+### 1. 인증 화면
+- 모던한 글래스 모피즘 디자인
+- 로그인/회원가입 전환
+- 이메일 유효성 검사
+- 부드러운 애니메이션 효과
 
-## 배포 정보
+### 2. 홈 화면
+- 병원 검색 기능
+- 전문과목 빠른 필터
+- 추천 병원 가로 스크롤
+- 전체 병원 리스트
 
-- 앱 이름: 약시간 (Yaksigan)
-- 배포 상태: 완료
+### 3. 바텀 네비게이션
+- 홈: 병원 검색 및 목록
+- 프로모션: 할인 정보 (구현 예정)
+- 예약내역: 내 예약 관리 (구현 예정)
+- 광고문의: 병원/에이전시 문의 (구현 예정)
+- 내정보: 프로필 및 설정
 
-## 설정 참고 자료
+## 🚀 시작하기
 
-### Android 설정
-- `android/build.gradle`
-- `android/app/build.gradle`
-- `android/app/src/main/AndroidManifest.xml`
+### 필수 요구사항
+- Flutter SDK 3.5.3+
+- Dart 3.0+
+- iOS 11.0+ / Android API 21+
 
-### iOS 설정
-- 참고: [flutter_local_notifications 예제](https://github.com/MaikuB/flutter_local_notifications/blob/master/flutter_local_notifications/example/ios/Runner/AppDelegate.swift)
-- `ios/Runner/AppDelegate.swift`
+### 설치 및 실행
 
-## 사용 모듈
-
-- `flutter_local_notifications`: 로컬 알림 기능 제공 ([참고](https://pub.dev/packages/flutter_local_notifications))
-- `timezone`: 시간대 관리 ([참고](https://pub.dev/packages/timezone))
-- `rxdart`: 반응형 프로그래밍 지원 ([참고](https://pub.dev/packages/rxdart))
-
-## 문제 및 해결 (Issues)
-
-### 문제 1: iOS 빌드 실패
-```
-Failed to build iOS app
-Error (Xcode): double-quoted include "ActionEventSink.h" in framework header, expected angle-bracketed instead
-Error (Xcode): 'Flutter/Flutter.h' file not found
-Error launching application on Nohs iPhone.
-```
-- 원인: `flutter_local_notifications` 모듈의 헤더 파일 참조 오류
-- 해결: Xcode 설정 및 Podfile 점검 필요 (추가 조치 필요 시 문서화 예정)
-
-### 문제 2: 시간대 설정
-- 문제: 기본 시간대가 UTC로 설정되어 한국 시간대(Asia/Seoul)와 불일치
-- 해결:
-  ```dart
-  tz.setLocalLocation(tz.getLocation('Asia/Seoul')); // 한국 시간대 설정
-  ```
-
-## 할 일 (To-Do)
-
-- [x] 영구 저장소 데이터와 Provider 연동 문제 해결 (앱 재시작 시 데이터 유지)
-- [x] 알림 클릭 시 상세 페이지로 이동 및 알림 종료 기능 추가
-- [ ] 알림 종료 전 5분 주기 반복 알림 설정
-- [x] 앱 아이콘 추가
-- [ ] 앱 스토어 배포 준비
-- [ ] 약 삭제 기능 구현
-- [ ] 알림 재설정 기능 구현 (`cancelAndRescheduleMedicationNotifications` 타겟)
-
-## 백그라운드 작업: Workmanager 활용
-
-### 목표
-- 매일 약 복용 여부(`hasTakenMedicationToday`) 확인 후 알림 재설정
-- 조건에 따라 `_scheduleFollowUpNotifications` 메서드 재실행
-
-### 참고
-- [Workmanager 패키지](https://pub.dev/packages/workmanager)
-
-### 제한사항
-- Workmanager는 Android에서만 동작, iOS 미지원
-- 대안: FCM(Firebase Cloud Messaging)으로 통합
-
-## FCM 대안 전략
-
-### 계획
-1. 약 복용 버튼 클릭 시 기록 저장 및 반복 알림(`_scheduleFollowUpNotifications`) 취소
-2. FCM으로 매일 자정(00:00:00)에 알림 예약
-3. 취소된 반복 알림을 FCM으로 재등록
-
-### 이유
-- `flutter_local_notifications`는 알림 일시정지 기능 미지원
-- 백그라운드 작업의 Android/iOS 통합 어려움
-- 유지보수 효율성 증대
-
-### 단점
-- 네트워크 요청 실패 시 알림 누락 가능성
-
-## 개선된 기획 방향
-
-- 알림: 기존 반복 설정 유지
-- 로그 기능 추가: 약 복용 시간 리스트 형식으로 하단에 기록
-- 향후 필요 시 네이티브 알림 일시정지 기능 도입検討
-
-## Flutter Native Splash 설정
-
-### 실행 명령어
-- 생성: `flutter pub run flutter_native_splash:create`
-- 제거 후 재생성:
-  ```
-  flutter pub run flutter_native_splash:remove
-  flutter pub run flutter_native_splash:create
-  ```
-
-## 개인정보 처리방침 URL 생성
-
-- 참고: [개인정보보호 포털](https://www.privacy.go.kr/front/per/inf/perInfStep01.do)
-
-## Keystore 생성
-
-### 명령어
+1. **의존성 설치**
 ```bash
-# 기본 예시
-keytool -genkey -v -keystore upload-keystore.jks -keyalg RSA -keysize 2048 -validity 10000 -alias upload
-
-# 경로 지정 예시
-keytool -genkey -v -keystore ~/key.jks -keyalg RSA -keysize 2048 -validity 10000 -alias key
+flutter pub get
 ```
 
-### 설정
-- 생성된 Keystore 파일을 `android/app/build.gradle`에 적용 (참고 문서화 완료)
+2. **iOS 시뮬레이터 실행**
+```bash
+flutter run
+```
 
-# android 배포
+3. **Android 에뮬레이터 실행**
+```bash
+flutter run -d android
+```
 
-- flutter build appbundle
-- flutter build appbundle --release
+## 🔧 환경 설정
 
-- ref: https://luvris2.tistory.com/832
+### Supabase 설정
+`lib/constants/app_config.dart`에서 Supabase 설정을 확인하세요:
 
-빌드 파일 위치: build/app/outputs/bundle/release/app-release.aab
+```dart
+class AppConfig {
+  static const String supabaseUrl = 'YOUR_SUPABASE_URL';
+  static const String supabaseAnonKey = 'YOUR_SUPABASE_ANON_KEY';
+}
+```
 
+### 테스트 계정
+앱을 테스트하려면 다음 단계를 따르세요:
+
+1. 회원가입 화면에서 이메일과 비밀번호 입력
+2. 이메일 확인 (개발 모드에서는 자동 확인)
+3. 로그인하여 메인 화면 접근
+
+## 🎨 디자인 시스템
+
+### 컬러 팔레트
+- **Primary**: #007AFF (iOS 블루)
+- **Success**: #34C759
+- **Warning**: #FF9500
+- **Error**: #FF3B30
+
+### 글래스 모피즘 효과
+- BackdropFilter를 사용한 블러 효과
+- 반투명 배경과 테두리
+- 그라데이션을 통한 입체감
+- 부드러운 그림자 효과
+
+### 타이포그래피
+- **폰트**: Noto Sans (한글 지원)
+- **크기**: 12px ~ 32px
+- **굵기**: 400 (Regular) ~ 700 (Bold)
+
+## 📁 프로젝트 구조
+
+```
+lib/
+├── constants/          # 앱 상수 및 설정
+│   └── app_config.dart
+├── screens/           # 화면 파일들
+│   ├── auth/          # 인증 관련 화면
+│   └── main/          # 메인 앱 화면들
+├── widgets/           # 재사용 가능한 위젯
+│   └── glass_container.dart
+├── services/          # API 및 서비스 로직
+├── models/           # 데이터 모델
+├── providers/        # 상태 관리 (Riverpod)
+└── main.dart         # 앱 진입점
+```
+
+## 🔗 관련 문서
+
+- [Flutter 개발 가이드](../medik-project/FLUTTER_DEVELOPMENT_GUIDE.md)
+- [데이터베이스 스키마](../medik-project/prisma/schema.prisma)
+- [Supabase 문서](https://supabase.com/docs)
+- [Riverpod 문서](https://riverpod.dev/)
+
+## 🐛 문제 해결
+
+### 일반적인 문제
+
+1. **패키지 설치 오류**
+```bash
+flutter clean
+flutter pub get
+```
+
+2. **iOS 빌드 오류**
+```bash
+cd ios
+pod install
+cd ..
+flutter run
+```
+
+3. **Android 빌드 오류**
+- Android Studio에서 SDK 버전 확인
+- `android/app/build.gradle`에서 minSdkVersion 확인
+
+## 📞 지원
+
+문제가 발생하거나 질문이 있으시면:
+- 이슈 생성하여 문의
+- 개발팀에 직접 연락
+
+## 📄 라이선스
+
+이 프로젝트는 개인/상업적 사용을 위한 것입니다.
+
+
+
+# 버전업은 pubspec.yaml 파일의 version 값을 변경하고, 버전 번호를 증가시키세요.
+
+# 버전 번호는 다음과 같은 형식으로 작성해야 합니다:
+
+# 1.0.0+1
+
+# 1.0.1+2
+
+# 1.1.0+3
+
+# 1.1.1+4
+
+# 버전 + 빌드 번호
+
+버전 변경 후 
+
+flutter clean
+flutter pub get
+flutter build ios
+
+
+
+# android
+
+1. 수정
+2. pubspec.yaml 파일의 version 값을 변경하고, 버전 번호를 증가시키세요.
+3. flutter clean
+4. flutter build appbundle
+5. flutter build appbundle --release --obfuscate --split-debug-info=build/symbols 
+(경고 해결)
+
+6. 번들된 파일을 새버전으로 게시하여 검사
 
 
 7. 에뮬레이터 실행 후 
