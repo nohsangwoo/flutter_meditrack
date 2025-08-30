@@ -3,6 +3,7 @@ import 'package:meditrack/providers/medication_provider.dart';
 import 'package:meditrack/services/notification_service.dart';
 import 'package:provider/provider.dart';
 import '../widgets/medication_list_item.dart';
+import '../widgets/medication_progress_liquid.dart';
 import 'add_medication_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -20,10 +21,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   listenToNotifications() {
-    print("Listening to notification");
     NotificationService.onClickNotification.stream.listen((event) {
-      print("inside listen in home.dart");
-      print(event);
       Navigator.pushNamed(context, '/detail_alarm', arguments: event);
     });
   }
@@ -85,6 +83,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                 ],
+              ),
+            ),
+            // Medication Progress Visualization
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: MedicationProgressLiquid(
+                medications: medicationProvider.medications,
+                height: 180,
               ),
             ),
             const SizedBox(height: 16),
